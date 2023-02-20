@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>巴科斯范式(BNF)通常被用来描述一个上下文无关文法，这里我也使用BNF描述ty，需要注意的是下面列表列出的文法不是完全符合BNF规范，比如BNF规定用符号"::="表示等于,用符号"|"表示or,假设有一个表示四则运算的文法用BNF表示如下:
+    </p>
+    <div class="code">
+        <span>expression ::=</span><br />
+        <span>expression "+" expression |</span><br />
+        <span>expression "-" expression |</span><br />
+        <span>expression "*" expression |</span><br />
+        <span>expression "/" expression |</span>
+        <span>"number"</span>
+    </div>
+    <p>我会用三个表格描述上面文法</p>
+    <table>
+        <caption>终结符表</caption>
+        <tbody>
+            <tr>
+                <td>+</td>
+                <td>-</td>
+                <td>*</td>
+                <td>/</td>
+                <td>number</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <caption>优先级表(序号越大表示优先级越高)</caption>
+        <tbody>
+            <tr>
+                <td class="index"></td>
+                <td>+ -</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>/ *</td>
+                <td>左结合</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <caption>文法描述</caption>
+        <thead>
+            <tr>
+                <th>产生式头</th>
+                <th>产生式</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>expression</td>
+                <td>expression + expression</td>
+            </tr>
+            <tr>
+                <td>expression</td>
+                <td>expression - expression</td>
+            </tr>
+            <tr>
+                <td>expression</td>
+                <td>expression * expression</td>
+            </tr>
+            <tr>
+                <td>expression</td>
+                <td>expression / expression</td>
+            </tr>
+            <tr>
+                <td>expression</td>
+                <td>number</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>并且规定所有没有在<b>终结符表</b>和<b>优先级表</b>中出现的符号都是非终结符</p>
+    <p>ty的文法描述如下：</p>
+    <table>
+        <tbody>
+            <caption>终结符列表</caption>
+            <tr>
+                <td>private</td>
+                <td>%</td>
+                <td>&lt;&lt;</td>
+                <td>&gt;&gt;</td>
+                <td>^</td>
+                <td>~</td>
+                <td>&</td>
+                <td>|</td>
+                <td>extension</td>
+                <td>string</td>
+                <td>native</td>
+                <td>var</td>
+                <td>val</td>
+                <td>;</td>
+                <td>id</td>
+                <td>immediate_val</td>
+                <td>+</td>
+                <td>-</td>
+                <td>++</td>
+                <td>--</td>
+            </tr>
+            <tr>
+                <td>(</td>
+                <td>)</td>
+                <td>?</td>
+                <td>{</td>
+                <td>}</td>
+                <td>[</td>
+                <td>]</td>
+                <td>,</td>
+                <td>:</td>
+                <td>function</td>
+                <td>class</td>
+                <td>=&gt;</td>
+                <td>operator</td>
+                <td>new</td>
+                <td>.</td>
+                <td>extends</td>
+                <td>if</td>
+                <td>else</td>
+                <td>do</td>
+                <td>while</td>
+            </tr>
+            <tr>
+                <td>for</td>
+                <td>switch</td>
+                <td>case</td>
+                <td>default</td>
+                <td>valuetype</td>
+                <td>import</td>
+                <td>as</td>
+                <td>break</td>
+                <td>continue</td>
+                <td>this</td>
+                <td>return</td>
+                <td>get</td>
+                <td>set</td>
+                <td>sealed</td>
+                <td>try</td>
+                <td>catch</td>
+                <td>throw</td>
+                <td>super</td>
+                <td>basic_type</td>
+                <td>instanceof</td>
+            </tr>
+            <tr>
+                <td>autounwinding</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <caption>优先级表(序号越大表示优先级越高)</caption>
+        <tbody>
+            <tr>
+                <td class="index"></td>
+                <td>=</td>
+                <td>右结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>?</td>
+                <td>右结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>||</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>&&</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>|</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>^</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>&</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>== , !=</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>> , &lt; , &lt;= , >=</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>>> , &lt;&lt;</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>+ , -</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>* , / , %</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>++ , --</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>~</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>!</td>
+                <td>左结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>=></td>
+                <td>右结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>[]</td>
+                <td>无结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>()</td>
+                <td>无结合</td>
+            </tr>
+            <tr>
+                <td class="index"></td>
+                <td>.</td>
+                <td>无结合</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <caption>文法描述</caption>
+        <thead>
+            <tr>
+                <th>产生式头</th>
+                <th>产生式</th>
+                <th>产生式说明</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>program</td>
+                <td>import_stmts program_units</td>
+                <td>一个program由import_stmts和program_units构成,import_stmts语句必须位于整个program的最前面</td>
+                <td>因为import_stmts和program_units都可以为空，所以整个源码都是空白的也是符合文法规范的</td>
+            </tr>
+            <tr>
+                <td>import_stmts</td>
+                <td></td>
+                <td>imports可以为空</td>
+                <td rowspan="3">虽然文法定义了import，但是由于时间问题，编译器对import不做任何处理，暂未实现import相关处理</td>
+            </tr>
+            <tr>
+                <td>import_stmts</td>
+                <td>import_stmts import_stmt</td>
+                <td>BNF常用技巧，表示import_stmts语句可以是一条import，也可以是多条import语句组成</td>
+            </tr>
+            <tr>
+                <td>import_stmt</td>
+                <td>import id ;</td>
+                <td>import语句由import id ; 组成，如果 import system ;</td>
+            </tr>
+            <tr>
+                <td>program_units</td>
+                <td></td>
+                <td>program_units可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>program_units</td>
+                <td>program_units program_unit</td>
+                <td>BNF常用技巧，表示program_units语句可以是一条program_unit，也可以是多条program_unit语句组成</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>program_unit</td>
+                <td>declare ;</td>
+                <td>程序单元可以一条变量声明语句</td>
+                <td>这里定义的是全局变量</td>
+            </tr>
+            <tr>
+                <td>program_unit</td>
+                <td>class_definition</td>
+                <td>program_unit可以是一个class定义片段</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>program_unit</td>
+                <td>extension_method</td>
+                <td>program_unit可以是一个扩展函数定义片段</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>declare</td>
+                <td>var id : type</td>
+                <td>变量声明语句1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>declare</td>
+                <td>initDeclare</td>
+                <td>declare可以是带有初始值的声明语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>initDeclare</td>
+                <td>var id : type = object</td>
+                <td>带类型声明的初始化语句</td>
+                <td rowspan="4">val是value的缩写，表示不可变，类似c系语言的const,var是variable的缩写,表示可变</td>
+            </tr>
+            <tr>
+                <td>initDeclare</td>
+                <td>var id = object</td>
+                <td>不带类型声明的初始化语句</td>
+            </tr>
+            <tr>
+                <td>initDeclare</td>
+                <td>val id : type = object</td>
+                <td>带类型声明的初始化语句</td>
+            </tr>
+            <tr>
+                <td>initDeclare</td>
+                <td>val id = object</td>
+                <td>不带类型声明的初始化语句</td>
+            </tr>
+            <tr>
+                <td>declare</td>
+                <td>function_definition</td>
+                <td>declare还可以是一个函数定义语言</td>
+                <td>也就是function f(){};和var f=()=>{};是完全等价的</td>
+            </tr>
+            <tr>
+                <td>class_definition</td>
+                <td>modifier class basic_type template_declare extends_declare { class_units }</td>
+                <td>class定义语句如下:<br />valuetype class myclass extends baseClass{<br />构造函数...<br />成员...<br />}</td>
+                <td rowspan="3">
+                    1.因为template_declare可以为空，所以普通class和模板class的语法都是用这条产生式规定<br />
+                    2.因为在实现ty的时候秉承着"everything isobject",所以ty没有C++中thiscall的概念，没办法实现虚函数，所以虽然文法允许继承，但是在解析过程中遇到继承会直接报错
+                </td>
+            </tr>
+            <tr>
+                <td>extends_declare</td>
+                <td></td>
+                <td>可以不继承任何基类</td>
+            </tr>
+            <tr>
+                <td>extends_declare</td>
+                <td>extends type</td>
+                <td>可以继承任何单个基类</td>
+            </tr>
+            <tr>
+                <td>function_definition</td>
+                <td>function id template_declare ( parameter_declare ) { statements }</td>
+                <td>不显式声明返回值类型的函数定义</td>
+                <td rowspan="2">
+                    1.因为template_declare可以为空，所以普通函数和模板函数的语法都是用这条产生式规定<br />
+                    2.为了编译器的代码检查部分实现起来方便一点，只允许在全局作用域定义模板函数<br />
+                    3.如果使用了函数返回值类型推导，编译器在遇到任何递归返回值类型推导都会报错,如:<br />
+                    <div class="code">
+                        function f1(){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;return f1();<br />
+                        };
+                    </div>
+                    或者<br />
+                    <div class="code">
+                        function f1(){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;return f2();<br />
+                        };<br />
+                        function f2(){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;return f1();<br />
+                        };
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>function_definition</td>
+                <td>function id template_declare ( parameter_declare ) : type { statements }</td>
+                <td>显式声明返回值类型的函数定义</td>
+            </tr>
+            <tr>
+                <td>function_definition</td>
+                <td>function id template_declare ( parameter_declare ) : type { native }</td>
+                <td>native函数定义</td>
+                <td>native函数定义必须声明返回值类型，因为无法进行自动推导</td>
+            </tr>
+            <tr>
+                <td>extension_method</td>
+                <td>extension function id ( this plainType id , parameter_declare ) { statements }</td>
+                <td>带参数的扩展方法定义</td>
+                <td rowspan="4">
+                    假如定义了如下扩展函数<br />
+                    <div class="code">
+                        extension function toString(this int v){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;xxxx<br />
+                        }
+                    </div>
+                    就可以使用1.toString()了
+                </td>
+            </tr>
+            <tr>
+                <td>extension_method</td>
+                <td>extension function id ( this plainType id ) { statements }</td>
+                <td>不带参数的扩展方法定义</td>
+            </tr>
+            <tr>
+                <td>extension_method</td>
+                <td>extension function id ( this plainType id , parameter_declare ) : type { statements }</td>
+                <td>带参数，且声明了返回值类型的扩展方法定义</td>
+            </tr>
+            <tr>
+                <td>extension_method</td>
+                <td>extension function id ( this plainType id ) : type { statements }</td>
+                <td>不带参数，且声明了返回值类型的扩展方法定义</td>
+            </tr>
+            <tr>
+                <td>modifier</td>
+                <td>valuetype</td>
+                <td>说明这个class是值类型</td>
+                <td>
+                    值类型和引用类型一个是真实存放值，一个是存放指针。<br />
+                    <b>
+                        关于值类型的注意点：<br />
+                        1.如果一个值类型的局部变量的成员函数被访问，编译器会对这个变量捕获<br />
+                        假设一个代码块如下:<br />
+                        <div class="code">
+                            {<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;var a=1;<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;var f=a.toString;<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;return f;<br />
+                            }<br />
+                        </div>
+                        因为对象的成员函数始终持有这个对象，这里需要分析成员函数f是否会使得变量a的作用域逃逸出去，因为这种分析太麻烦了，所以任何值类型的局部变量被访问时，编译器都直接把这个变量捕获(目前版本和闭包实现完全一致)<br />
+                        2.和上面原因一样，如果一个值类型右值(立即数、函数返回值等)的成员函数被访问，会对这个右值装箱(box)
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td>modifier</td>
+                <td>sealed</td>
+                <td>暂无实现</td>
+                <td>以前文法允许继承的时候，该关键字表示不允许继承这个类，可以参考c#的sealed关键字</td>
+            </tr>
+            <tr>
+                <td>modifier</td>
+                <td></td>
+                <td>class修饰符可以留空，则默认是引用类型</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>template_declare</td>
+                <td></td>
+                <td>template_declare可以为空，表示相应的函数和class是普通函数和普通类</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>template_declare</td>
+                <td>template_definition</td>
+                <td>template_declare可以是template_definition</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>template_definition</td>
+                <td>&lt; template_definition_list &gt;</td>
+                <td></td>
+                <td rowspan="3">template_definition_list由下面这种结构组成&lt;T1,T2,T3&gt;</td>
+            </tr>
+            <tr>
+                <td>template_definition_list</td>
+                <td>id</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>template_definition_list</td>
+                <td>template_definition_list , id</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>( type )</td>
+                <td>因为括号优先级很高，所以有时候在源码难以阅读类型的时候使用</td>
+                <td>
+                    比如用这种语法声明一个数组<br />
+                    var arr:(()=>int)[];<br />
+                    数组每个元素是一个函数类型，函数接受0个参数，返回一个int
+                </td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>plainType</td>
+                <td>朴素类型</td>
+                <td>
+                    ty有三种类型:<br />
+                    1.函数类型<br />
+                    2.数组类型<br />
+                    3.class类型(朴素类型):<br />
+                    3.1 值类型<br />
+                    3.2 引用类型<br />
+                    这里的基础类型就是class类型
+                </td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>functionType</td>
+                <td>type可以是一个函数类型</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>arrayType</td>
+                <td>type可以是一个数组类型</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>plainType</td>
+                <td>basic_type</td>
+                <td>
+                    词法分析器在预处理源码的时候，会把源码中这种结构<br />
+                    class C1{}<br />
+                    class C2{}<br />
+                    中的C1和C2作为basic_type处理
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>plainType</td>
+                <td>plainType templateSpecialization</td>
+
+                <td></td>
+            </tr>
+            <tr>
+                <td>functionType</td>
+                <td>template_definition ( parameter_declare ) =&gt; type</td>
+                <td>模板类特化</td>
+                <td>
+                    即Map&lt;int&gt;也是一种类型
+                </td>
+            </tr>
+            <tr>
+                <td>functionType</td>
+                <td>( parameter_declare ) =&gt; type</td>
+                <td>函数类型由函数参数声明和返回值类型声明组成</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>arrayType</td>
+                <td>type array_type_list</td>
+                <td>数组类型由type和array_type_list组成</td>
+                <td rowspan="3"></td>
+            </tr>
+            <tr>
+                <td>array_type_list</td>
+                <td>[ ]</td>
+                <td>array_type_list可以是一对方括号</td>
+            </tr>
+            <tr>
+                <td>array_type_list</td>
+                <td>array_type_list [ ]</td>
+                <td>array_type_list也可以是多对方括号</td>
+            </tr>
+            <tr>
+                <td>parameter_declare</td>
+                <td>parameter_list</td>
+                <td>参数声明由parameter_declare组成</td>
+                <td rowspan="4"></td>
+            </tr>
+            <tr>
+                <td>parameter_declare</td>
+                <td></td>
+                <td>可以不声明任何参数</td>
+            </tr>
+            <tr>
+                <td>parameter_list</td>
+                <td>id : type</td>
+                <td>参数声明中的每个参数结构</td>
+            </tr>
+            <tr>
+                <td>parameter_list</td>
+                <td>parameter_list , id : type</td>
+                <td>可以有多个参数声明</td>
+            </tr>
+            <tr>
+                <td>class_units</td>
+                <td>class_units class_unit</td>
+                <td>class_units可以由多个class_unit组成</td>
+                <td rowspan="2"></td>
+            </tr>
+            <tr>
+                <td>class_units</td>
+                <td></td>
+                <td>class_units可以为空</td>
+            </tr>
+            <tr>
+                <td>class_unit</td>
+                <td>access_modifier declare ;</td>
+                <td>class_unit可以是一个变量定义</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>class_unit</td>
+                <td>operator_overload</td>
+                <td>class_unit可以是一个操作符重载定义</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>class_unit</td>
+                <td>get id ( ) : type { statements } ;</td>
+                <td>class_unit可以是一个getter</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>class_unit</td>
+                <td>set id ( id : type ) { statements } ;</td>
+                <td>class_unit可以是一个setter</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>class_unit</td>
+                <td>basic_type ( parameter_declare ) { statements }</td>
+                <td>构造函数定义</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>access_modifier</td>
+                <td></td>
+                <td>access_modifier可以为空</td>
+                <td rowspan="2">如果不指定access_modifier为private，则所有的成员都是public</td>
+            </tr>
+            <tr>
+                <td>access_modifier</td>
+                <td>private</td>
+                <td>access_modifier可以是private</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator + ( id : type ) : type { statements } ;</td>
+                <td rowspan="22">操作符重载</td>
+                <td rowspan="22">这里不允许重载"="是因为有了getter和setter，如果还允许重载"="，要被玩出花</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator - ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator * ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator / ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt; ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt;= ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt; ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt;= ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator == ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator || ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator && ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator [ ] ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator % ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator | ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator & ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt;&gt; ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt;&lt; ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ^ ( id : type ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ++ ( ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator -- ( ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ! ( ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ~ ( ) : type { statements } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator + ( id : type ) : type { native } ;</td>
+                <td rowspan="22">操作符重载</td>
+                <td rowspan="22">
+                    <b>如果一个操作符重载函数是native函数，这会指示编译器生成VM内置的操作指令，比如int的+操作符有相应的内置指令支持，而用户自定义的类型没有内置指令支持，所以用户不应该定义native操作符重载函数</b>
+                </td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator - ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator * ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator / ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt; ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt;= ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt; ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt;= ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator == ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator || ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator && ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator [ ] ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator % ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator | ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator & ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &gt;&gt; ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator &lt;&lt; ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ^ ( id : type ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ++ ( ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator -- ( ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ! ( ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>operator_overload</td>
+                <td>operator ~ ( ) : type { native } ;</td>
+            </tr>
+            <tr>
+                <td>statements</td>
+                <td>statements statement</td>
+                <td rowspan="2">stmts可以为空，也可以是单条stmt或者多条stmt</td>
+                <td rowspan="2"></td>
+            </tr>
+            <tr>
+                <td>statements</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>declare ;</td>
+                <td>声明语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>try { statements } catch_list</td>
+                <td>try catch语句</td>
+                <td>
+                    ty的try catch允许这种写法<br />
+                    <div class="code">
+                        try{<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;xxx<br />
+                        }catch(e:int){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;catch_1<br />
+                        }catch(e:int){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;catch_2<br />
+                        }
+                    </div>
+                    即可以在catch列表多次声明同一中类型的异常捕获，但是vm会从上往下检查匹配的异常类型，所以只有前面的catch子句生效,可以考虑编译时进行语义报错
+                </td>
+            </tr>
+            <tr>
+                <td>catch_list</td>
+                <td>catch ( id : type ) { statements }</td>
+                <td>catch_list可以是一条catch子句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>catch_list</td>
+                <td>catch_list catch ( id : type ) { statements }</td>
+                <td>catch_list可以是多条catch子句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>throw object ;</td>
+                <td>throw语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>return object ;</td>
+                <td>有返回值的return语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>return ;</td>
+                <td>无返回值的return语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>autounwinding ( declares ) { statements }</td>
+                <td>autounwinding语句</td>
+                <td>
+                    如果一个类型定义了无参且无返回值的成员函数unwinded，则可以使用autounwinding，autounwinding和c#的using语句以及java的try-with-resource语法一样。<br />
+                    c++不需要这种语法，因为当一个值类型的变量即将超出其作用域的时候，c++会自动调用析构函数，在其他编程语言中，因为强制阉割了c++指针的这种概念，所以需要一个资源回收机制。<br />
+                    这个机制在抛出异常时非常有用，尤其是创建资源时抛出异常，如：
+                    <div class="code">
+                        autounwinding(var obj1=new MyClass();var obj2=new MyClass()){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;xxx<br />
+                        }
+                    </div>
+                    假设obj1成功构建了，但是在构建obj2的时候出错，这时候只需要对obj1的资源进行回收，obj2不需要回收。<br />
+                    取名叫做<b>autounwinding</b>是因为有个概念叫做栈回退(展开)(stack unwinding)，这个关键字以后也许可以换个名字，毕竟太长了
+                </td>
+            </tr>
+            <tr>
+                <td>declares</td>
+                <td>declare</td>
+                <td>declares可以是单个变量声明</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>declares</td>
+                <td>declares ; declare</td>
+                <td>declares也可以是多个变量声明</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>if ( object ) statement</td>
+                <td>if语句</td>
+                <td>要求object的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>if ( object ) statement else statement</td>
+                <td>if-else语句</td>
+                <td>要求object的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>label_def do statement while ( object )</td>
+                <td>do-while循环</td>
+                <td>label_def是标签，用于循环内部的break和continue，要求object的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>label_def while ( object ) statement</td>
+                <td>while循环</td>
+                <td>label_def是标签，用于循环内部的break和continue，要求object的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>label_def for ( for_init ; for_condition ; for_step ) statement</td>
+                <td>for循环</td>
+                <td>label_def是标签，用于循环内部的break和continue，要求object的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>block</td>
+                <td>一个statement可以是一个block</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>break label_use ;</td>
+                <td>break语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>continue label_use ;</td>
+                <td>continue语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>switch ( object ) { switch_bodys }</td>
+                <td>switch语句</td>
+                <td>
+                    <b>
+                        这里需要特别注意，和c系语言不同，ty的switch语句没有break，如果要用类似c/c++的方式理解的话，即ty会对每个case标签结束位置强制插入一个break跳出switch<br />
+                    </b>
+                    语言太灵活不行，因为写代码的他不灵活，苦switch久矣
+                </td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>call ;</td>
+                <td>函数调用语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>assignment ;</td>
+                <td>赋值语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>increment ;</td>
+                <td>自增语句</td>
+                <td rowspan="2">
+                    正如ty不允许下面这种写法单独成为一条语句:
+                    <div class="code">
+                        a+b;
+                    </div>
+                    这里为什么又允许
+                    <div class="code">
+                        a++;
+                    </div>
+                    单独成为一条语句呢?<br />
+                    因为经常会有这种代码出现，所以就允许自增和自减单独成为一条语句吧:
+                    <div class="code">
+                        for(;;){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;counter++;{<br />
+                        }
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>decrement ;</td>
+                <td>自减语句</td>
+            </tr>
+            <tr>
+                <td>statement</td>
+                <td>_new ;</td>
+                <td>new语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>label_def</td>
+                <td></td>
+                <td>label_def可以为空</td>
+                <td>用于给几种循环定义标签</td>
+            </tr>
+            <tr>
+                <td>label_def</td>
+                <td>id :</td>
+                <td>label_def可以是一个id</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_init</td>
+                <td></td>
+
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_init</td>
+                <td>declare</td>
+                <td>for语句的初始化部分可以是一个变量定义</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_init</td>
+                <td>assignment</td>
+                <td>for语句的初始化部分也可以是一个赋值语句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_condition</td>
+                <td></td>
+                <td>for_condition可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_condition</td>
+                <td>object</td>
+                <td>for_condition可以是一个对象</td>
+                <td>condition的类型必须是system.bool</td>
+            </tr>
+            <tr>
+                <td>for_step</td>
+                <td></td>
+                <td>for_step可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>for_step</td>
+                <td>object</td>
+                <td>for_step可以是一个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>block</td>
+                <td>{ statements }</td>
+                <td>block由一对大括号{}和大括号内部的语句组成</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>label_use</td>
+                <td></td>
+                <td>label_use可以为空</td>
+                <td rowspan="2">label_use用于break和continue</td>
+            </tr>
+            <tr>
+                <td>label_use</td>
+                <td>id</td>
+                <td>label_use可以是一个id</td>
+            </tr>
+            <tr>
+                <td>switch_bodys</td>
+                <td></td>
+                <td>switch_bodys可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>switch_bodys</td>
+                <td>switch_bodys switch_body</td>
+                <td>switch_bodys可以由多个switch_body组成</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>switch_body</td>
+                <td>case object : statement</td>
+                <td>case子句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>switch_body</td>
+                <td>default : statement</td>
+                <td>default子句</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>call</td>
+                <td>对象可以是函数调用结果</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>_new</td>
+                <td>对象可以是_new语句结果</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>( object )</td>
+                <td>对象可以是"(对象)"</td>
+                <td>
+                    通常用于强制改变优先级，如:
+                    <div class="code">
+                        (1+2)*3
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object . id</td>
+                <td>对象可以是取成员</td>
+                <td>
+                    <div class="code">
+                        obj.a
+                    </div>
+                    取对象obj的成员a
+                </td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object templateSpecialization</td>
+                <td>对象可以是象模板特化</td>
+                <td>
+                    对一个模板对象进行特化<br />
+                    假设定义一个对象add如下:
+                    <div class="code">
+                        function add&lt;T&gt;(a:T,b:T){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;return a+b;<br />
+                        }<br />
+                    </div>
+                    则可以这样特化:
+                    <div class="code">
+                        add&lt;int&gt;
+                    </div>
+                    如:
+                    <div class="code">
+                        var f=add&lt;int&gt;;<br />
+                        f(1,2);
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>call</td>
+                <td>object ( arguments )</td>
+                <td>函数调用</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>assignment</td>
+                <td>object = object</td>
+                <td>赋值</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>increment</td>
+                <td>object ++</td>
+                <td>自增</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>decrement</td>
+                <td>object --</td>
+                <td>自减</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>increment</td>
+                <td>自增也可以是一个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>decrement</td>
+                <td>自减也可以是一个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object + object</td>
+                <td rowspan="24">运算符操作</td>
+                <td rowspan="24"></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object - object</td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object * object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object / object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &lt; object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &lt;= object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &gt; object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &gt;= object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object == object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object % object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object || object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object && object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object | object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object & object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &gt;&gt; object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object &lt;&lt; object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object ^ object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>~ object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>- object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>+ object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>! object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object [ object ]</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object ? object : object</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>object instanceof type</td>
+
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>id</td>
+                <td>id也可以是一个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>immediate_val</td>
+                <td>立即数也可以是一个对象</td>
+                <td>1,1.0,true这些都是立即数</td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>immediate_string</td>
+                <td>一个对象可以是string</td>
+                <td>如:"hello world"</td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>immediate_array</td>
+                <td>一个对象可以是立即数组</td>
+                <td>
+                    {[1,2,3]}，表示一个int数组，有三个元素，这个对象可以被正常使用:如
+                    <div class="code">
+                        var a={[1,2,3]};<br />
+                        foo({[1,2,3]});
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>super</td>
+                <td>因为不允许继承，所以super也没用了</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>this</td>
+                <td>this</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>template_definition ( parameter_declare ) =&gt; { statements }</td>
+                <td>弃用</td>
+                <td>
+                    设计文法的时候考虑到这种写法
+                    <div class="code">
+                        var add=&lt;T&gt;(a:T,b:T)=&gt;{return a+b};<br />
+                        var f=add; //这里add是一个还没有特化的模板对象<br />
+                        f&lt;int&gt;(1,2); //到这里才特化<br />
+                    </div>
+                    但是实现的时候发现，这样做需要在运行时实现模板特化，太复杂了，暂时放弃
+                </td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>( parameter_declare ) =&gt; { statements }</td>
+                <td>lambda表达式</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>object</td>
+                <td>( type ) object</td>
+                <td>强制转型</td>
+                <td>
+                    在强制转型中分为三种类型：值类型、object、引用类型<br />
+                    值类型转换为object时会自动装箱,object转换为值类型的时候会自动拆箱
+                </td>
+            </tr>
+            <tr>
+                <td>immediate_array</td>
+                <td>{ [ immediate_array_elements ] }</td>
+                <td>立即数组</td>
+                <td>
+                    一开始我想设计成和js一样，用[1,2,3]表示数组，但是有文法冲突，比如<br />
+                    <div class="code">(int)[]</div>
+                    存在如下二义性<br />
+                    1. (int)[] 声明一个int数组<br />
+                    2. 把零长数组[]转换为int类型<br />
+                    所以就用{[ ]}包裹立即数组了
+                </td>
+            </tr>
+            <tr>
+                <td>immediate_array_elements</td>
+                <td>immediate_array_element_list</td>
+                <td>immediate_array_elements由immediate_array_element_list组成</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>immediate_array_elements</td>
+                <td></td>
+                <td>立即数组元素可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>immediate_array_element_list</td>
+                <td>immediate_array_element_list , object</td>
+                <td>立即数组元素可以有多个object</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>immediate_array_element_list</td>
+                <td>object</td>
+                <td>立即数组元素可以时一个object</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>_new</td>
+                <td>new type ( arguments )</td>
+                <td>new一个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>_new</td>
+                <td>new type array_init_list</td>
+                <td>new一个数组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>array_init_list</td>
+                <td>array_inits array_placeholder</td>
+                <td rowspan="7">new数组的参数部分由array_inits和array_placeholder组成</td>
+                <td rowspan="7">
+                    如:
+                    <div class="code">
+                        new int[1][2][][];
+                    </div>
+                    其中 [1][2][3]对应了array_inits部分，[][]对应了array_placeholder部分
+                </td>
+            </tr>
+            <tr>
+                <td>array_inits</td>
+                <td>array_inits [ object ]</td>
+
+            </tr>
+            <tr>
+                <td>array_inits</td>
+                <td>[ object ]</td>
+
+            </tr>
+            <tr>
+                <td>array_placeholder</td>
+                <td>array_placeholder_list</td>
+
+            </tr>
+            <tr>
+                <td>array_placeholder</td>
+                <td></td>
+
+            </tr>
+            <tr>
+                <td>array_placeholder_list</td>
+                <td>array_placeholder_list [ ]</td>
+
+            </tr>
+            <tr>
+                <td>array_placeholder_list</td>
+                <td>[ ]</td>
+
+            </tr>
+            <tr>
+                <td>templateSpecialization</td>
+                <td>&lt; templateSpecialization_list &gt;</td>
+                <td>模板特化参数</td>
+                <td>
+                    特化的时候需要注意：不能写下面这种特化代码:<br />
+                    <div class="code">
+                        function add&lt;T&gt;(a:T,b:T){<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;return add &lt;T&gt; (a,b);<br />
+                        };
+                    </div>
+                    编译器会崩溃。<br />
+                    正如C++模板展开一样,ty会在编译器进行模板展开（我不确定C++这样写会不会出问题，但是ty-compiler一定会崩，想要搞崩一个编译器很简单）。c++模板非常优秀，模板元编程更是好玩，缺点就是没人精通，所以我设计的是功能阉割版模板
+                </td>
+            </tr>
+            <tr>
+                <td>templateSpecialization_list</td>
+                <td>type</td>
+                <td>模板特化参数可以是单个类型</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>templateSpecialization_list</td>
+                <td>templateSpecialization_list , type</td>
+                <td>模板特化参数可以是多个类型</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>arguments</td>
+                <td></td>
+                <td>函数调用参数可以为空</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>arguments</td>
+                <td>argument_list</td>
+                <td>函数调用参数可以是一个argument_list</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>argument_list</td>
+                <td>object</td>
+                <td>argument_list可以是单个对象</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>argument_list</td>
+                <td>argument_list , object</td>
+                <td>argument_list可以是多个对象</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <p><b>这里列出的终结符优先级表和文法描述表是不能直接放到TSCC中编译，因为一些产生式的移入规约冲突并没有在这个表中解决，想要查看完整的文法描述和优先级列表，可以去源码中获取。</b></p>
+</body>
+<style>
+    .code {
+        background-color: rgb(200, 200, 200);
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 5px 0;
+    }
+
+    tr {
+        counter-increment: tr_counter 1;
+    }
+
+    .index::before {
+        content: counter(tr_counter);
+    }
+
+    caption {
+        word-break: keep-all;
+    }
+
+    caption,
+    th,
+    td {
+        padding: 0.5rem 1rem;
+        border: solid black 1px;
+    }
+</style>
+
+</html>

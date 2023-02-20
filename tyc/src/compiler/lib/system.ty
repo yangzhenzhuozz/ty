@@ -1,0 +1,142 @@
+function _VMLoadNativeLib(fileName:byte[],functionNames:byte[][]):void{
+    native
+};
+
+class NullPointerException{
+    NullPointerException(){}
+}
+class ArithmeticException{
+    ArithmeticException(){}
+}
+class CastException{
+    CastException(){}
+}
+class ArrayIndexOutOfBoundsException{
+    ArrayIndexOutOfBoundsException(){}
+}
+
+
+
+class string{
+    var buffer:byte[];
+    string(arg:byte[]){
+        this.buffer=arg;
+    }
+    operator + ( b : string ) : string { 
+        var newBuffer=new byte[this.buffer.length+b.buffer.length];
+        for(var i=0;i<this.buffer.length;i++){
+            newBuffer[i]=this.buffer[i];
+        }
+        for(var i=0;i<b.buffer.length;i++){
+            newBuffer[this.buffer.length+i]=b.buffer[i];
+        }
+        return new string(newBuffer);
+    };
+}
+
+valuetype class bool{
+     operator == ( v : bool ) : bool { native } ;
+     operator || ( v : bool ) : bool { native } ;
+     operator && ( v : bool ) : bool { native } ;
+     operator ! () : bool { native } ;
+}
+
+valuetype class byte{
+    operator ^ ( v : byte ) : byte { native } ;
+    operator & ( v : byte ) : byte { native } ;
+    operator | ( v : byte ) : byte { native } ;
+    operator << ( v : int ) : byte { native } ;
+    operator >> ( v : int ) : byte { native } ;
+    operator ~ () : byte { native } ;
+    operator % ( v : byte ) : byte { native } ;
+    operator + ( v : byte ) : byte { native } ;
+    operator - ( v : byte ) : byte { native } ;
+    operator * ( v : byte ) : byte { native } ;
+    operator / ( v : byte ) : byte { native } ;
+    operator ++ () : void { native } ;
+    operator -- () : void { native } ;
+    operator < ( v : byte ) : bool { native } ;
+    operator <= ( v : byte ) : bool { native } ;
+    operator > ( v : byte ) : bool { native } ;
+    operator >= ( v : byte ) : bool { native } ;
+    operator == ( v : byte ) : bool { native } ;
+}
+
+valuetype class short{
+    operator ^ ( v : short ) : short { native } ;
+    operator & ( v : short ) : short { native } ;
+    operator | ( v : short ) : short { native } ;
+    operator << ( v : int ) : short { native } ;
+    operator >> ( v : int ) : short { native } ;
+    operator ~ () : short { native } ;
+    operator % ( v : short ) : short { native } ;
+    operator + ( v : short ) : short { native } ;
+    operator - ( v : short ) : short { native } ;
+    operator * ( v : short ) : short { native } ;
+    operator / ( v : short ) : short { native } ;
+    operator ++ () : void { native } ;
+    operator -- () : void { native } ;
+    operator < ( v : short ) : bool { native } ;
+    operator <= ( v : short ) : bool { native } ;
+    operator > ( v : short ) : bool { native } ;
+    operator >= ( v : short ) : bool { native } ;
+    operator == ( v : short ) : bool { native } ;
+}
+
+valuetype class int{
+    operator ^ ( v : int ) : int { native } ;
+    operator & ( v : int ) : int { native } ;
+    operator | ( v : int ) : int { native } ;
+    operator << ( v : int ) : int { native } ;
+    operator >> ( v : int ) : int { native } ;
+    operator ~ () : int { native } ;
+    operator % ( v : int ) : int { native } ;
+    operator + ( v : int ) : int { native } ;
+    operator - ( v : int ) : int { native } ;
+    operator * ( v : int ) : int { native } ;
+    operator / ( v : int ) : int { native } ;
+    operator ++ () : void { native } ;
+    operator -- () : void { native } ;
+    operator < ( v : int ) : bool { native } ;
+    operator <= ( v : int ) : bool { native } ;
+    operator > ( v : int ) : bool { native } ;
+    operator >= ( v : int ) : bool { native } ;
+    operator == ( v : int ) : bool { native } ;
+}
+
+valuetype class long{
+    operator ^ ( v : long ) : long { native } ;
+    operator & ( v : long ) : long { native } ;
+    operator | ( v : long ) : long { native } ;
+    operator << ( v : int ) : long { native } ;
+    operator >> ( v : int ) : long { native } ;
+    operator ~ () : long { native } ;
+    operator % ( v : long ) : long { native } ;
+    operator + ( v : long ) : long { native } ;
+    operator - ( v : long ) : long { native } ;
+    operator * ( v : long ) : long { native } ;
+    operator / ( v : long ) : long { native } ;
+    operator ++ () : void { native } ;
+    operator -- () : void { native } ;
+    operator < ( v : long ) : bool { native } ;
+    operator <= ( v : long ) : bool { native } ;
+    operator > ( v : long ) : bool { native } ;
+    operator >= ( v : long ) : bool { native } ;
+    operator == ( v : long ) : bool { native } ;
+}
+
+valuetype class double{
+    operator + ( v : double ) : double { native } ;
+    operator - ( v : double ) : double { native } ;
+    operator * ( v : double ) : double { native } ;
+    operator / ( v : double ) : double { native } ;
+    operator ++ () : void { native } ;
+    operator -- () : void { native } ;
+    operator < ( v : double ) : bool { native } ;
+    operator <= ( v : double ) : bool { native } ;
+    operator > ( v : double ) : bool { native } ;
+    operator >= ( v : double ) : bool { native } ;
+    operator == ( v : double ) : bool { native } ;
+}
+
+valuetype class object{}

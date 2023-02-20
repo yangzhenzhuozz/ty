@@ -1,0 +1,9 @@
+{
+  "name": "tyc",
+  "dependencies": {
+    "@types/node": "^18.13.0"
+  },
+  "version": "1.2.5",
+  "bin": "dist/compiler/main.js",
+  "type": "module"
+}

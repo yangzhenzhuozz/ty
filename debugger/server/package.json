@@ -1,0 +1,19 @@
+{
+  "name": "service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "output/start.js",
+  "scripts": {
+    "dev": "node output/start.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@types/express": "^4.17.14",
+    "@types/express-ws": "^3.0.1",
+    "express": "^4.18.2",
+    "express-ws": "^5.0.2"
+  }
+}

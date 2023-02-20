@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>namespace</h1>
+    <p>假设用户有如下两个输入文件, xxx/xx/a.ty,xxx/b.ty，使用编译器编译的时候，编译器会用文件名(忽略后缀)创建对应的命名空间，则该命名空间的全局变量和类型会被自动加上命名空间前缀,如:</p>
+    <div class="code">
+        //a.ty<br />
+        var v=5;
+        class classA{<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;classA(){<br />
+        &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;v=6;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }
+    </div>
+    在当前命名空间中，可以不加命名空间前缀，如果要在其他命名空间使用a.ty的全局变量和类型，如在b.ty用到了a.ty定义的全局变量和类型，则应该加上命名空间前缀
+    <div class="code">
+        //b.ty<br />
+        function main(){<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;print(a.v);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;new a.classA();<br />
+        }
+    </div>
+    <p>编译器会在最后一个命名空间（也就是最后一个输入文件）查找全局变量mian函数作为入口</p>
+
+    <h1>类型推导</h1>
+    <p>函数返回值类型推导不能出现递归推导,如:</p>
+    <div class="code">
+        function f1(){<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;return f1();<br />
+        };
+    </div>
+    或者<br />
+    <div class="code">
+        function f1(){<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;return f2();<br />
+        };<br />
+        function f2(){<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;return f1();<br />
+        };
+    </div>
+
+    <h1>变量捕获</h1>
+    <ol>
+        <li>
+            <p>ty支持闭包，会为每一个被捕获的变量自动创建一个包裹类，并且把捕获的变量放入包裹类中。</p>
+        </li>
+        <li>
+            <p>任何值类型局部变量的成员函数被使用的时候都会创建一个包裹类，对其进行捕获，因为成员函数会持有对这个对象的引用，如果这个成员函数逃逸出了作用域，就需要把这个值类型也弄出去</p>
+            <div class="code">
+                {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;var a=5;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;var f=a.toString;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return f;//这个return语句会导致a逃逸出其原本的作用域，所以需要进行捕获<br />
+                }
+            </div>
+            <p>如果对代码做优化分析，可以追踪出它的成员函数有没有逃逸到作用域外面，再决定是否捕获这个变量，但是太麻烦了，所以这里通通进行捕获</p>
+        </li>
+    </ol>
+
+    <h1>系统内置类型</h1>
+    系统内置了7个值类型class
+    <ol>
+        <li>system.bool</li>
+        <li>system.byte</li>
+        <li>system.short</li>
+        <li>system.int</li>
+        <li>system.long</li>
+        <li>system.double</li>
+        <li>system.object</li>
+    </ol>
+    5个引用类型class
+    <ol>
+        <li>system.string</li>
+        <li>system.NullPointerException</li>
+        <li>system.ArithmeticException</li>
+        <li>system.CastException</li>
+        <li>system.ArrayIndexOutOfBoundsException</li>
+    </ol>
+    这7个值类型和string在实际使用的时候可以省略system前缀，直接写成 bool,byte,int,shrot,int,long,double,object,string<br />
+    另外四种类型NullPointerException,ArithmeticException,CastException,ArrayIndexOutOfBoundsException不能省略system前缀
+
+    <h1>系统内置对象</h1>
+    系统内置了一个函数system._VMLoadNativeLib,用于加载外部函数(比如用c/c++写的动态连接库)<br />
+    关于系统内置类型和内置对象可以打开compiler/lib/system.ty查看
+
+    <h1>调用外部函数</h1>
+    <p>在现代操作系统中，几乎不给用户程序直接操作硬件的权限，即使我们想要使用类似printf的函数，也需要进行系统调用，但是大部分操作系统都只提供C语言编写的API接口，所以ty要想printf或者读写文件、操作网络，都必须拥有调用C
+        API的能力。</p>
+    <p>ty的VM内置了一个函数system._VMLoadNativeLib，用于加载动态链接库，用法如下：</p>
+    <p>在程序执行目录用创建一个lib名为"myDll.dll",其中有一个导出函数名为myCode_myNativeFun</p>
+    <div class="code">
+        //myCode.ty<br />
+        function myNativeFun():void{<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;native<br />
+        };<br />
+        var main=()=>{<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;system._VMLoadNativeLib("myDll".buffer,{["myCode_myNativeFun".buffer]});<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;//这时候myCode_myNativeFun就已经可用了<br />
+        };
+    </div>
+    system._VMLoadNativeLib第一个参数是待加载的动态链接库文件名，需要省略.dll后缀，第二个参数是一个byte[][]数组,表示要从动态链接库中刷新的native函数列表<br/>
+    外部函数名使用namespace_functionName的格式，如上面示例代码，在myCode这个命名空间定义了myNativeFun这个native函数，所以外部函数名要写成myCode_myNativeFun，使用system._VMLoadNativeLib时，VM会自动把native函数连接到第二个参数列表中
+</body>
+<style>
+    .code {
+        background-color: rgb(200, 200, 200);
+    }
+</style>
+
+</html>
