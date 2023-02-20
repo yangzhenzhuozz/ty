@@ -5,7 +5,7 @@
 > |dll|外部函数库，实现了main.NativePrintBytesString|一个vs项目，打开sln就可以了|
 > |doc|文档|无|
 > |tyc|编译器|查看readme.md|
-> |vm|vm|用cmake构建就行|
+> |vm|vm|查看readme.md|
 ---
 + tyc和vm分别是编译器和vm，dll实现了printf，这三个目录的内容是必备的
 + debugger不是程序运行必要条件
