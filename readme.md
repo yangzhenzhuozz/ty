@@ -7,6 +7,7 @@
 > |tyc|编译器|查看readme.md|
 > |vm|vm|查看readme.md|
 ---
++ tyc用了自己写的LR(1)分析器实现，这个LR(1)文法分析器在TSCC项目里
 + tyc和vm分别是编译器和vm，dll实现了printf，这三个目录的内容是必备的
 + debugger不是程序运行必要条件
 ---
