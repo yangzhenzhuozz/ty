@@ -6,6 +6,7 @@ import semanticCheck from './semanticCheck.js'
 import codeGen from './codeGen.js'
 import { setProgram } from "./ir.js";
 import { Program } from "./program.js";
+import { userTypeDictionary } from "./lexrule.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from 'node:url';
 function main(inputFiles: string[]) {
@@ -28,15 +29,15 @@ function main(inputFiles: string[]) {
         for (let sourceItem of sources) {
             lexer.addRule([`${sourceItem.namespace}.(_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|1|2|3|4|5|6|7|8|9|0)*`,
             (arg) => {
-                arg.value = arg.yytext;
-                return 'id';
+                if (userTypeDictionary.has(arg.yytext)) {
+                    (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } };
+                    return "basic_type";
+                } else {
+                    arg.value = arg.yytext;
+                    return 'id';
+                }
             }]);
         }
-        lexer.addRule([`main.main`,
-        (arg) => {
-            arg.value = arg.yytext;
-            return 'id';
-        }]);
         //源码替换阶段
         for (let sourceItem of sources) {
             let reg = /class[\s\r\n]+([a-zA-Z_][a-zA-Z_0-9]*)/g;
@@ -44,7 +45,7 @@ function main(inputFiles: string[]) {
             for (let group: RegExpExecArray | null; (group = reg.exec(sourceItem.source)) != null;) {
                 classNameInFile.push(group[1]!);
                 className.push(`${sourceItem.namespace}.${group[1]!}`);
-                lexer.addRule([`${sourceItem.namespace}.${group[1]!}`, (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `${arg.yytext}` } }; return "basic_type"; }]);//给词法分析器新增basic_type的解析规则
+                userTypeDictionary.add(`${sourceItem.namespace}.${group[1]!}`);//添加class的名字
             }
             if (classNameInFile.length > 0) {
                 //在本文件内部替换
