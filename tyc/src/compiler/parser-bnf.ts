@@ -65,9 +65,10 @@ export function setParserNameSpace(name: string) {
                             if (program.getDefinedType(extensionTypeName)?.property[extendFunName] != undefined) {
                                 throw `类型${extensionTypeName}扩展方法的名字和该类型已有成员${extendFunName}重复`;
                             }
-                            program.extensionMethodsDef[extensionTypeName] = {
-                                [extendFunName]: extensionMethod
-                            };
+                            if (program.extensionMethodsDef[extensionTypeName] == undefined) {
+                                program.extensionMethodsDef[extensionTypeName] = {};
+                            }
+                            program.extensionMethodsDef[extensionTypeName][extendFunName] = extensionMethod;
                         }
                         else if (program_units[k].hasOwnProperty("modifier")) {//是类型定义
                             let defClass = (program_units[k] as TypeDef);

@@ -25,6 +25,7 @@
                 "${workspaceFolder}/**/*.js"
             ],
             "args": [
+                "d:\\Users\\john\\Desktop\\release\\demo\\t1.ty",
                 "d:\\Users\\john\\Desktop\\release\\demo\\main.ty"
             ]
         }

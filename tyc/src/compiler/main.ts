@@ -68,8 +68,16 @@ function main(inputFiles: string[]) {
                 program.setProp(propName, sourceItem.namespace, programPartial.propertySpace[sourceItem.namespace][propName]);
             }
             //合并扩展方法
-            for (let propName in programPartial.extensionMethodsDef) {
-                program.extensionMethodsDef[propName] = programPartial.extensionMethodsDef[propName];
+            for (let typeName in programPartial.extensionMethodsDef) {
+                if (program.extensionMethodsDef[typeName] == undefined) {
+                    program.extensionMethodsDef[typeName] = {};
+                }
+                for (let funName in programPartial.extensionMethodsDef[typeName]) {
+                    if (program.extensionMethodsDef[typeName][funName] != undefined) {
+                        throw `重复定义扩展方法${typeName}.${funName}`;
+                    }
+                    program.extensionMethodsDef[typeName][funName] = programPartial.extensionMethodsDef[typeName][funName];
+                }
             }
         }
 
@@ -93,4 +101,4 @@ function main(inputFiles: string[]) {
         console.error(`${e}`);
     }
 }
-main([path.join(dirname(fileURLToPath(import.meta.url)),'lib','system.ty'),...process.argv.slice(2)]);//将lib/system.ty和其他用户的输入放进待编译文件列表中
+main([path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.ty'), ...process.argv.slice(2)]);//将lib/system.ty和其他用户的输入放进待编译文件列表中

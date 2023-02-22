@@ -3,3 +3,4 @@ package-lock.json
 dist/
 src/compiler/parser.ts
 src/lexer/parser.ts
+output/
