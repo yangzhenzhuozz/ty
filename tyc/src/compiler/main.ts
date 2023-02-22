@@ -45,7 +45,7 @@ function main(inputFiles: string[]) {
             for (let group: RegExpExecArray | null; (group = reg.exec(sourceItem.source)) != null;) {
                 classNameInFile.push(group[1]!);
                 className.push(`${sourceItem.namespace}.${group[1]!}`);
-                userTypeDictionary.add(`${sourceItem.namespace}.${group[1]!}`);//添加class的名字
+                userTypeDictionary.set(`${sourceItem.namespace}.${group[1]!}`, `${sourceItem.namespace}.${group[1]!}`);//给词法分析添加class名字
             }
             if (classNameInFile.length > 0) {
                 //在本文件内部替换
@@ -53,6 +53,18 @@ function main(inputFiles: string[]) {
                 sourceItem.source = sourceItem.source.replace(classRepalceReg, `${sourceItem.namespace}.$1`);
             }
         }
+
+        //给词法分析添加class名字
+        userTypeDictionary.set('void', 'void');
+        userTypeDictionary.set('byte', 'system.byte');
+        userTypeDictionary.set('short', 'system.short');
+        userTypeDictionary.set('int', 'system.int');
+        userTypeDictionary.set('long', 'system.long');
+        userTypeDictionary.set('double', 'system.double');
+        userTypeDictionary.set('bool', 'system.bool');
+        userTypeDictionary.set('string', 'system.string');
+        userTypeDictionary.set('object', 'system.object');
+
         lexer.compile();
 
         console.time("解析源码耗时");

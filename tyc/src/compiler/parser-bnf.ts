@@ -427,7 +427,7 @@ export function setParserNameSpace(name: string) {
                         if (userTypeDictionary.has(t)) {
                             throw new Error(`不能使用已有类型作为模板类型声明`);
                         }
-                        userTypeDictionary.add(t);
+                        userTypeDictionary.set(t, t);
                     }
                     return $[1] as string[];
                 }

@@ -1,5 +1,5 @@
 import Lexer from "../lexer/lexer.js";
-export let userTypeDictionary = new Set<string>();
+export let userTypeDictionary = new Map<string, string>();
 //词法规则
 let lexer = new Lexer();
 lexer.addRule(['( |\t|\r|\n)( |\t|\r|\n)*', undefined]);//忽略空格、制表、回车、换行
@@ -15,17 +15,13 @@ lexer.addRule(['(_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E
     (arg) => {
         //在解析模板的时候会用到
         if (userTypeDictionary.has(arg.yytext)) {
-            (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } };
+            (arg.value as TypeUsed) = { PlainType: { name: userTypeDictionary.get(arg.yytext)! } };
             return "basic_type";
         } else {
             arg.value = arg.yytext;
             return 'id';
         }
     }]);
-lexer.addRule(['extension', (arg) => { arg.value = arg.yytext; return `extension`; }]);
-lexer.addRule(['native', (arg) => { arg.value = arg.yytext; return `native`; }]);
-lexer.addRule(['var', (arg) => { arg.value = arg.yytext; return `var`; }]);
-lexer.addRule(['val', (arg) => { arg.value = arg.yytext; return `val`; }]);
 lexer.addRule(['=>', (arg) => { arg.value = arg.yytext; return `=>`; }]);
 lexer.addRule(['...', (arg) => { arg.value = arg.yytext; return `...`; }]);
 lexer.addRule([',', (arg) => { arg.value = arg.yytext; return `,`; }]);
@@ -62,6 +58,10 @@ lexer.addRule(['&&', (arg) => { arg.value = arg.yytext; return `&&`; }]);
 lexer.addRule(['\\|\\|', (arg) => { arg.value = arg.yytext; return `||`; }]);
 lexer.addRule(['!', (arg) => { arg.value = arg.yytext; return `!`; }]);
 lexer.addRule(['.', (arg) => { arg.value = arg.yytext; return `.`; }]);
+lexer.addRule(['extension', (arg) => { arg.value = arg.yytext; return `extension`; }]);
+lexer.addRule(['native', (arg) => { arg.value = arg.yytext; return `native`; }]);
+lexer.addRule(['var', (arg) => { arg.value = arg.yytext; return `var`; }]);
+lexer.addRule(['val', (arg) => { arg.value = arg.yytext; return `val`; }]);
 lexer.addRule(['function', (arg) => { arg.value = arg.yytext; return `function`; }]);
 lexer.addRule(['operator', (arg) => { arg.value = arg.yytext; return `operator`; }]);
 lexer.addRule(['class', (arg) => { arg.value = arg.yytext; return `class`; }]);
@@ -93,13 +93,4 @@ lexer.addRule(['instanceof', (arg) => { arg.value = arg.yytext; return `instance
 lexer.addRule(['autounwinding', (arg) => { arg.value = arg.yytext; return `autounwinding`; }]);
 lexer.addRule(['(true)|(false)', (arg) => { arg.value = 'true'; return "immediate_val"; }]);
 lexer.addRule(['null', (arg) => { arg.value = 'null'; return "immediate_val"; }]);
-lexer.addRule(['void', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } }; return "basic_type"; }]);
-lexer.addRule(['byte', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['short', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['int', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['long', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['double', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['bool', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['string', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
-lexer.addRule(['object', (arg) => { arg.value = (arg.value as TypeUsed) = { PlainType: { name: `system.${arg.yytext}` } }; return "basic_type"; }]);
 export default lexer;
