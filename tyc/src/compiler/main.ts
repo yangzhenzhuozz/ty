@@ -32,6 +32,11 @@ function main(inputFiles: string[]) {
                 return 'id';
             }]);
         }
+        lexer.addRule([`main.main`,
+        (arg) => {
+            arg.value = arg.yytext;
+            return 'id';
+        }]);
         //源码替换阶段
         for (let sourceItem of sources) {
             let reg = /class[\s\r\n]+([a-zA-Z_][a-zA-Z_0-9]*)/g;

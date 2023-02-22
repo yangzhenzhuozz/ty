@@ -55,6 +55,7 @@ interface ArrayType {
     innerType: TypeUsed;
 }
 interface FunctionType {
+    namsespace:string;//函数处于的命名空间
     hasFunctionScan?: boolean;//是否已经进行过函数扫描
     isNative?: boolean;//是否为native函数
     _arguments: VariableDescriptor;

@@ -2,10 +2,9 @@
 import { assert, isPointType } from './codeGen.js';
 import { program, globalVariable, typeTable } from './ir.js';
 import { FunctionSignWithArgumentAndRetType, TypeUsedSign, FunctionSignWithArgument } from './lib.js';
-import { Scope, BlockScope, ClassScope, ProgramScope, setScopeSpaceName } from './scope.js';
+import { Scope, BlockScope, ClassScope, ProgramScope, setScopeSpaceName, spaceNameForScope } from './scope.js';
 import { ClassSpecialize, FunctionSpecialize } from './templateSpecialize.js';
 let programScope: ProgramScope;
-let namespaceForTypeCheck = '';
 function OperatorOverLoad(scope: Scope, leftObj: ASTNode, rightObj: ASTNode | undefined, originNode: ASTNode, op: opType | opType2): { type: TypeUsed, location?: 'prop' | 'field' | 'stack' | 'array_element' } {
     let leftType = nodeRecursion(scope, leftObj, [], {}).type;
     if (leftType?.PlainType?.name == 'void') {
@@ -237,7 +236,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
             if (type == undefined) {
                 let initAST = prop.initAST!;
                 if ((initAST).hasTypeInferRecursion) {
-                    throw `类型推导出现了循环:${namespaceForTypeCheck}.${accessName}`;
+                    throw `类型推导出现了循环:${spaceNameForScope}.${accessName}`;
                 }
                 (initAST).hasTypeInferRecursion = true;//标记一下这个属性已经在推导路径中被使用过了
                 type = nodeRecursion(programScope, initAST, label, declareRetType).type;
@@ -245,7 +244,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
             }
             if (assignmentAST != undefined) {
                 if (prop.variable == 'val') {
-                    throw `${namespaceForTypeCheck}.${accessName}声明为val,禁止赋值`;
+                    throw `${spaceNameForScope}.${accessName}声明为val,禁止赋值`;
                 }
             }
             result = { type: type, hasRet: false, location: 'field' };
@@ -412,6 +411,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
         } else {//是一个函数体
             functionScan(new BlockScope(scope, node['immediate'].functionValue!, node['immediate'].functionValue!.body!, {}), node['immediate'].functionValue!);
             let functionType: FunctionType = {
+                namsespace: spaceNameForScope,
                 isNative: node['immediate'].functionValue!.isNative,
                 _arguments: node['immediate'].functionValue!._arguments,
                 retType: node['immediate'].functionValue!.retType,
@@ -817,10 +817,10 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
         let fieldName = spce.obj['load']!;
         let realObjName = fieldName + '<' + spce.types!.map((type) => TypeUsedSign(type)).reduce((p, c) => `${p},${c}`) + '>';
         if (spce.obj['load'] != undefined) {
-            if (program.getProgramProp(realObjName, namespaceForTypeCheck) == undefined) {
+            if (program.getProgramProp(realObjName, spaceNameForScope) == undefined) {
                 //如果这个模板对象的特化对象，则进行特化
-                if (program.getProgramTemplateProp(fieldName, namespaceForTypeCheck) != undefined) {
-                    let tmpFunObj = JSON.parse(JSON.stringify(program.getProgramTemplateProp(fieldName, namespaceForTypeCheck))) as VariableProperties;//拷贝一份，避免修改掉原来的数据
+                if (program.getProgramTemplateProp(fieldName, spaceNameForScope) != undefined) {
+                    let tmpFunObj = JSON.parse(JSON.stringify(program.getProgramTemplateProp(fieldName, spaceNameForScope))) as VariableProperties;//拷贝一份，避免修改掉原来的数据
                     let map: { [key: string]: TypeUsed } = {};
                     for (let i = 0; i < tmpFunObj.type!.FunctionType!.templates!.length; i++) {
                         let k = tmpFunObj.type!.FunctionType!.templates![i];
@@ -829,8 +829,8 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
 
                     tmpFunObj.type!.FunctionType!.templates = undefined;//已经特化了，移除模板定义
                     FunctionSpecialize(tmpFunObj.type!.FunctionType!, map);
-                    program.setProp(realObjName, namespaceForTypeCheck, tmpFunObj);
-                    programScope.setPropForTemplateSpecialize(realObjName, namespaceForTypeCheck);
+                    program.setProp(realObjName, spaceNameForScope, tmpFunObj);
+                    programScope.setPropForTemplateSpecialize(realObjName, spaceNameForScope);
                     //把函数对象注入到program中
                     let blockScope = new BlockScope(programScope, tmpFunObj.type!.FunctionType, tmpFunObj.type!.FunctionType!.body!, {});
                     functionScan(blockScope, tmpFunObj.type!.FunctionType!);
@@ -1011,6 +1011,7 @@ function BlockScan(blockScope: BlockScope, label: string[], declareRetType: { re
                     type: sourceType
                 };
                 wrapTypeDef._constructor[constructorSign] = {
+                    namsespace: spaceNameForScope,
                     capture: {},
                     _construct_for_type: wrapClassName,
                     _arguments: _arguments,
@@ -1054,6 +1055,7 @@ function BlockScan(blockScope: BlockScope, label: string[], declareRetType: { re
                      */
                     let constructorSign = FunctionSignWithArgumentAndRetType([], { PlainType: { name: 'void' } });
                     wrapTypeDef._constructor[constructorSign] = {
+                        namsespace: spaceNameForScope,
                         capture: {},
                         _construct_for_type: wrapClassName,
                         _arguments: {},//无参构造函数
@@ -1124,6 +1126,8 @@ function BlockScan(blockScope: BlockScope, label: string[], declareRetType: { re
     return ret;
 }
 function functionScan(blockScope: BlockScope, fun: FunctionType): TypeUsed {
+    let lastNameSpace = spaceNameForScope;
+    setScopeSpaceName(fun.namsespace);
     if (fun.templates) {
         //因为在program中定义的模板类和模板函数已经被移除了，所以这里不允许出现任何模板函数定义
         throw `不允许在class内部或者block内部定义模板函数`;
@@ -1176,6 +1180,7 @@ function functionScan(blockScope: BlockScope, fun: FunctionType): TypeUsed {
             fun.retType = blockRet.retType;
         }
     }
+    setScopeSpaceName(lastNameSpace);//还原命名空间
     return fun.retType!;
 }
 function ClassScan(classScope: ClassScope) {
@@ -1366,29 +1371,31 @@ export function registerType(type: TypeUsed): number {
  */
 function extensionMethodReplace(exm: ExtensionMethod) {
     let typeName = TypeUsedSign(exm.extensionType);
-    program.extensionMethodsImpl[typeName] = {
-        [exm.extendFunName]: {
-            capture: {},
-            _arguments: {
-                [exm.thisName]: {
-                    variable: 'var',
-                    type: exm.extensionType
-                }
-            },
-            body: {
-                desc: 'Block',
-                body: [
-                    {
+    if (program.extensionMethodsImpl[typeName] == undefined) {
+        program.extensionMethodsImpl[typeName] = {};
+    }
+    program.extensionMethodsImpl[typeName][exm.extendFunName] = {
+        namsespace: spaceNameForScope,
+        capture: {},
+        _arguments: {
+            [exm.thisName]: {
+                variable: 'var',
+                type: exm.extensionType
+            }
+        },
+        body: {
+            desc: 'Block',
+            body: [
+                {
+                    desc: 'ASTNode',
+                    ret: {
                         desc: 'ASTNode',
-                        ret: {
-                            desc: 'ASTNode',
-                            immediate: {
-                                functionValue: exm.fun
-                            }
+                        immediate: {
+                            functionValue: exm.fun
                         }
                     }
-                ]
-            }
+                }
+            ]
         }
     };
 }
@@ -1515,7 +1522,6 @@ export default function semanticCheck() {
     program.templatePropSpace = {};
     program.tempalteType = {};
     for (let spaceName in program.propertySpace) {
-        namespaceForTypeCheck = spaceName;
         setScopeSpaceName(spaceName);
         for (let variableName in program.propertySpace[spaceName]) {
             var prop = program.propertySpace[spaceName][variableName];
@@ -1541,7 +1547,6 @@ export default function semanticCheck() {
     }
     //扫描property
     for (let spaceName in program.propertySpace) {
-        namespaceForTypeCheck = spaceName;
         setScopeSpaceName(spaceName);
         for (let variableName in program.propertySpace[spaceName]) {
             var prop = program.propertySpace[spaceName][variableName];
@@ -1588,7 +1593,6 @@ export default function semanticCheck() {
     let programSize = 0;
     //计算program的size
     for (let spaceName in program.propertySpace) {
-        namespaceForTypeCheck = spaceName;
         setScopeSpaceName(spaceName);
         for (let fieldName in program.propertySpace[spaceName]) {
             let field = program.propertySpace[spaceName][fieldName];

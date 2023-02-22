@@ -267,7 +267,7 @@ export function setParserNameSpace(name: string) {
                     let parameter_declare = $[4] as VariableDescriptor;
                     let statements = $[7] as Block;
                     let ret: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红
-                    ret[id] = { variable: 'val', type: { FunctionType: { capture: {}, _arguments: parameter_declare, body: statements, templates: template_declare } } };
+                    ret[id] = { variable: 'val', type: { FunctionType: { namsespace: namespaceforParser, capture: {}, _arguments: parameter_declare, body: statements, templates: template_declare } } };
                     return ret;
                 }
             }
@@ -286,7 +286,7 @@ export function setParserNameSpace(name: string) {
                     let ret_type = $[7] as TypeUsed;
                     let statements = $[9] as Block;
                     let ret: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红
-                    ret[id] = { variable: 'val', type: { FunctionType: { capture: {}, _arguments: parameter_declare, body: statements, templates: template_declare, retType: ret_type } } };
+                    ret[id] = { variable: 'val', type: { FunctionType: { namsespace: namespaceforParser, capture: {}, _arguments: parameter_declare, body: statements, templates: template_declare, retType: ret_type } } };
                     return ret;
                 }
             }
@@ -304,7 +304,7 @@ export function setParserNameSpace(name: string) {
                     let parameter_declare = $[4] as VariableDescriptor;
                     let ret_type = $[7] as TypeUsed;
                     let ret: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红
-                    ret[id] = { variable: 'val', type: { FunctionType: { capture: {}, _arguments: parameter_declare, isNative: true, templates: template_declare, retType: ret_type } } };
+                    ret[id] = { variable: 'val', type: { FunctionType: { namsespace: namespaceforParser, capture: {}, _arguments: parameter_declare, isNative: true, templates: template_declare, retType: ret_type } } };
                     return ret;
                 }
             }
@@ -325,7 +325,7 @@ export function setParserNameSpace(name: string) {
                             extensionType,
                             thisName,
                             extendFunName: $[2] as string,
-                            fun: { capture: {}, _arguments, isNative: false, body }
+                            fun: { namsespace: namespaceforParser, capture: {}, _arguments, isNative: false, body }
                         }
                     };
                 }
@@ -346,7 +346,7 @@ export function setParserNameSpace(name: string) {
                             extensionType,
                             thisName,
                             extendFunName: $[2] as string,
-                            fun: { capture: {}, _arguments: {}, isNative: false, body }
+                            fun: { namsespace: namespaceforParser, capture: {}, _arguments: {}, isNative: false, body }
                         }
                     };
                 }
@@ -369,7 +369,7 @@ export function setParserNameSpace(name: string) {
                             extensionType,
                             thisName,
                             extendFunName: $[2] as string,
-                            fun: { capture: {}, _arguments, isNative: false, retType, body }
+                            fun: { namsespace: namespaceforParser, capture: {}, _arguments, isNative: false, retType, body }
                         }
                     };
                 }
@@ -391,7 +391,7 @@ export function setParserNameSpace(name: string) {
                             extensionType,
                             thisName,
                             extendFunName: $[2] as string,
-                            fun: { capture: {}, _arguments: {}, isNative: false, retType, body }
+                            fun: { namsespace: namespaceforParser, capture: {}, _arguments: {}, isNative: false, retType, body }
                         }
                     };
                 }
@@ -536,7 +536,7 @@ export function setParserNameSpace(name: string) {
                     // }
                     // let parameter_declare = $[2] as VariableDescriptor;
                     // let ret_type = $[5] as TypeUsed;
-                    // return { FunctionType: { capture: {}, templates: template_definition, _arguments: parameter_declare, retType: ret_type } };
+                    // return { FunctionType: {namsespace: namespaceforParser, capture: {}, templates: template_definition, _arguments: parameter_declare, retType: ret_type } };
                 }
             }
         },//泛型函数类型
@@ -546,7 +546,7 @@ export function setParserNameSpace(name: string) {
                 action: function ($, s): TypeUsed {
                     let parameter_declare = $[1] as VariableDescriptor;
                     let ret_type = $[4] as TypeUsed;
-                    return { FunctionType: { capture: {}, _arguments: parameter_declare, retType: ret_type } };
+                    return { FunctionType: { namsespace: namespaceforParser, capture: {}, _arguments: parameter_declare, retType: ret_type } };
                 }
             }
         },//函数类型
@@ -703,6 +703,7 @@ export function setParserNameSpace(name: string) {
                         variable: 'var',
                         type: {
                             FunctionType: {
+                                namsespace: namespaceforParser,
                                 capture: {},
                                 _arguments: {},
                                 body: statements,
@@ -731,6 +732,7 @@ export function setParserNameSpace(name: string) {
                         variable: 'var',
                         type: {
                             FunctionType: {
+                                namsespace: namespaceforParser,
                                 capture: {},
                                 _arguments: argument,
                                 body: statements,
@@ -753,7 +755,7 @@ export function setParserNameSpace(name: string) {
                     let parameter_declare = $[2] as VariableDescriptor;
                     let statements = $[5] as Block;
                     let ret: { [key: string]: FunctionType } = JSON.parse("{}");//为了生成的解析器不报红
-                    let functionType: FunctionType = { capture: {}, _construct_for_type: basic_type.PlainType!.name, _arguments: parameter_declare, body: statements, retType: { PlainType: { name: 'void' } } };
+                    let functionType: FunctionType = { namsespace: namespaceforParser, capture: {}, _construct_for_type: basic_type.PlainType!.name, _arguments: parameter_declare, body: statements, retType: { PlainType: { name: 'void' } } };
                     let sign: string = FunctionSign(functionType);
                     ret[sign] = functionType;
                     return [ret];
@@ -785,6 +787,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -807,6 +810,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -829,6 +833,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -851,6 +856,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -873,6 +879,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -895,6 +902,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -917,6 +925,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -939,6 +948,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -961,6 +971,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -983,6 +994,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1005,6 +1017,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1027,6 +1040,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1049,6 +1063,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1071,6 +1086,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1093,6 +1109,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1115,6 +1132,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1137,6 +1155,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1159,6 +1178,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         body: statements,
@@ -1177,6 +1197,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         body: statements,
@@ -1195,6 +1216,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         body: statements,
@@ -1213,6 +1235,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         body: statements,
@@ -1231,6 +1254,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         body: statements,
@@ -1252,6 +1276,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1273,6 +1298,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1294,6 +1320,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1315,6 +1342,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1336,6 +1364,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1357,6 +1386,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1378,6 +1408,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1399,6 +1430,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1420,6 +1452,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1441,6 +1474,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1462,6 +1496,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1483,6 +1518,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1504,6 +1540,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1525,6 +1562,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1546,6 +1584,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1567,6 +1606,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1588,6 +1628,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1609,6 +1650,7 @@ export function setParserNameSpace(name: string) {
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: argument,
                         isNative: true,
@@ -1626,6 +1668,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         isNative: true,
@@ -1643,6 +1686,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         isNative: true,
@@ -1660,6 +1704,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         isNative: true,
@@ -1677,6 +1722,7 @@ export function setParserNameSpace(name: string) {
                     let retType = $[5] as TypeUsed;
                     let op: opType | opType2 = $[1];
                     let fun: FunctionType = {
+                        namsespace: namespaceforParser,
                         capture: {},
                         _arguments: {},
                         isNative: true,
@@ -2478,14 +2524,14 @@ export function setParserNameSpace(name: string) {
                     // for (let t of template_definition) {
                     //     userTypeDictionary.delete(t);
                     // }
-                    // return { desc: "ASTNode", immediate: { functionValue: { capture: {}, _arguments: $[2] as VariableDescriptor, body: $[6] as Block, templates: $[0] as string[] } } };
+                    // return { desc: "ASTNode", immediate: { functionValue: {namsespace: namespaceforParser, capture: {}, _arguments: $[2] as VariableDescriptor, body: $[6] as Block, templates: $[0] as string[] } } };
                 }
             }
         },//模板lambda
         {
             "object:( parameter_declare ) => { statements }": {
                 action: function ($, s): ASTNode {
-                    return { desc: "ASTNode", immediate: { functionValue: { capture: {}, _arguments: $[1] as VariableDescriptor, body: $[5] as Block } } };
+                    return { desc: "ASTNode", immediate: { functionValue: { namsespace: namespaceforParser, capture: {}, _arguments: $[1] as VariableDescriptor, body: $[5] as Block } } };
                 }
             }
         },//lambda

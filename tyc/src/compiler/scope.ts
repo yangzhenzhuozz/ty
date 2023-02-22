@@ -1,7 +1,7 @@
 import { assert } from './codeGen.js';
 import { globalVariable } from './ir.js';
 import { Program } from './program.js';
-let spaceNameForScope = "";//和命名空间相关的全局变量
+export let spaceNameForScope = "";//和命名空间相关的全局变量
 export function setScopeSpaceName(name: string) {
     spaceNameForScope = name;
 }
