@@ -309,14 +309,14 @@ export function link(programScope: ProgramScope) {
     irBuffer.appendInt64(irTable.get('@VMExceptionGen')!);
 
     //vm必备异常
-    irBuffer.appendInt64(irTable.get('system.NullPointerException_init')!);
-    irBuffer.appendInt64(irTable.get(`@constructor:system.NullPointerException args:() retType:void`)!);
-    irBuffer.appendInt64(irTable.get('system.ArithmeticException_init')!);
-    irBuffer.appendInt64(irTable.get(`@constructor:system.ArithmeticException args:() retType:void`)!);
-    irBuffer.appendInt64(irTable.get('system.CastException_init')!);
-    irBuffer.appendInt64(irTable.get(`@constructor:system.CastException args:() retType:void`)!);
-    irBuffer.appendInt64(irTable.get('system.ArrayIndexOutOfBoundsException_init')!);
-    irBuffer.appendInt64(irTable.get(`@constructor:system.ArrayIndexOutOfBoundsException args:() retType:void`)!);
+    irBuffer.appendInt64(irTable.get('system.exception.NullPointerException_init')!);
+    irBuffer.appendInt64(irTable.get(`@constructor:system.exception.NullPointerException args:() retType:void`)!);
+    irBuffer.appendInt64(irTable.get('system.exception.ArithmeticException_init')!);
+    irBuffer.appendInt64(irTable.get(`@constructor:system.exception.ArithmeticException args:() retType:void`)!);
+    irBuffer.appendInt64(irTable.get('system.exception.CastException_init')!);
+    irBuffer.appendInt64(irTable.get(`@constructor:system.exception.CastException args:() retType:void`)!);
+    irBuffer.appendInt64(irTable.get('system.exception.ArrayIndexOutOfBoundsException_init')!);
+    irBuffer.appendInt64(irTable.get(`@constructor:system.exception.ArrayIndexOutOfBoundsException args:() retType:void`)!);
 
     for (let ircontainer of irContainerList) {
         for (let ir of ircontainer.irs) {

@@ -1402,8 +1402,8 @@ function extensionMethodReplace(exm: ExtensionMethod) {
 
 function necessaryClassCheck() {
     let hasVMLoadNativeLib = false;
-    if (program.getProgramProp('system._VMLoadNativeLib').type?.FunctionType != undefined) {
-        let VMLoadNativeLibFun = program.getProgramProp('system._VMLoadNativeLib').type?.FunctionType!;
+    if (program.getProgramProp('system.loadLibrary').type?.FunctionType != undefined) {
+        let VMLoadNativeLibFun = program.getProgramProp('system.loadLibrary').type?.FunctionType!;
         let argNames = Object.keys(VMLoadNativeLibFun._arguments);
         if (argNames.length == 2) {
             let arg0Sign = TypeUsedSign(VMLoadNativeLibFun._arguments[argNames[0]].type!);
@@ -1415,52 +1415,52 @@ function necessaryClassCheck() {
         }
     }
     if (!hasVMLoadNativeLib) {
-        throw `VM运行必须定义一个名为VMLoadNativeLib的native函数,类型如下  参数1:byte[],参数2:byte[][] 返回值类型:void`;
+        throw `VM运行必须定义一个名为system.loadLibrary的native函数,类型如下  参数1:byte[],参数2:byte[][] 返回值类型:void`;
     }
 
-    if (program.getDefinedType('system.NullPointerException') == undefined) {
+    if (program.getDefinedType('system.exception.NullPointerException') == undefined) {
         throw `VM运行必备类型NullPointerException未定义`;
     } else {
-        if (!isPointType({ PlainType: { name: 'system.NullPointerException' } })) {
+        if (!isPointType({ PlainType: { name: 'system.exception.NullPointerException' } })) {
             throw `NullPointerException必须是引用类型`;
         } else {
-            if (program.getDefinedType('system.NullPointerException')._constructor[`args:() retType:void`] == undefined) {
+            if (program.getDefinedType('system.exception.NullPointerException')._constructor[`args:() retType:void`] == undefined) {
                 throw `NullPointerException必须有一个无参构造函数`;
             }
         }
     }
 
-    if (program.getDefinedType('system.ArithmeticException') == undefined) {
+    if (program.getDefinedType('system.exception.ArithmeticException') == undefined) {
         throw `VM运行必备类型ArithmeticException未定义`;
     } else {
-        if (!isPointType({ PlainType: { name: 'system.ArithmeticException' } })) {
+        if (!isPointType({ PlainType: { name: 'system.exception.ArithmeticException' } })) {
             throw `ArithmeticException必须是引用类型`;
         } else {
-            if (program.getDefinedType('system.ArithmeticException')._constructor[`args:() retType:void`] == undefined) {
+            if (program.getDefinedType('system.exception.ArithmeticException')._constructor[`args:() retType:void`] == undefined) {
                 throw `ArithmeticException必须有一个无参构造函数`;
             }
         }
     }
 
-    if (program.getDefinedType('system.CastException') == undefined) {
+    if (program.getDefinedType('system.exception.CastException') == undefined) {
         throw `VM运行必备类型CastException未定义`;
     } else {
-        if (!isPointType({ PlainType: { name: 'system.CastException' } })) {
+        if (!isPointType({ PlainType: { name: 'system.exception.CastException' } })) {
             throw `CastException必须是引用类型`;
         } else {
-            if (program.getDefinedType('system.CastException')._constructor[`args:() retType:void`] == undefined) {
+            if (program.getDefinedType('system.exception.CastException')._constructor[`args:() retType:void`] == undefined) {
                 throw `CastException必须有一个无参构造函数`;
             }
         }
     }
 
-    if (program.getDefinedType('system.ArrayIndexOutOfBoundsException') == undefined) {
+    if (program.getDefinedType('system.exception.ArrayIndexOutOfBoundsException') == undefined) {
         throw `VM运行必备类型ArrayIndexOutOfBoundsException未定义`;
     } else {
-        if (!isPointType({ PlainType: { name: 'system.ArrayIndexOutOfBoundsException' } })) {
+        if (!isPointType({ PlainType: { name: 'system.exception.ArrayIndexOutOfBoundsException' } })) {
             throw `ArrayIndexOutOfBoundsException必须是引用类型`;
         } else {
-            if (program.getDefinedType('system.ArrayIndexOutOfBoundsException')._constructor[`args:() retType:void`] == undefined) {
+            if (program.getDefinedType('system.exception.ArrayIndexOutOfBoundsException')._constructor[`args:() retType:void`] == undefined) {
                 throw `ArrayIndexOutOfBoundsException必须有一个无参构造函数`;
             }
         }

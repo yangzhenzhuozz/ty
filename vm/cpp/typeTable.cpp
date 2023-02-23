@@ -17,21 +17,21 @@ TypeTable::TypeTable(const char* filename, StringPool& stringPool)
     for (int i = 0; i < length; i++)
     {
         auto typeName = stringPool.items[items[i].name];//warning C6385好像避免不了
-        if (strcmp(typeName, "system.NullPointerException") == 0)
+        if (strcmp(typeName, "system.exception.NullPointerException") == 0)
         {
-            system_NullPointerException = i;
+            system_exception_NullPointerException = i;
         }
-        else if (strcmp(typeName, "system.ArithmeticException") == 0)
+        else if (strcmp(typeName, "system.exception.ArithmeticException") == 0)
         {
-            system_ArithmeticException = i;
+            system_exception_ArithmeticException = i;
         }
-        else if (strcmp(typeName, "system.CastException") == 0)
+        else if (strcmp(typeName, "system.exception.CastException") == 0)
         {
-            system_CastException = i;
+            system_exception_CastException = i;
         }
-        else if (strcmp(typeName, "system.ArrayIndexOutOfBoundsException") == 0)
+        else if (strcmp(typeName, "system.exception.ArrayIndexOutOfBoundsException") == 0)
         {
-            system_ArrayIndexOutOfBoundsException = i;
+            system_exception_ArrayIndexOutOfBoundsException = i;
         }
         else if (strcmp(typeName, "system.bool") == 0)
         {

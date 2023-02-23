@@ -1,0 +1,12 @@
+class NullPointerException{
+    NullPointerException(){}
+}
+class ArithmeticException{
+    ArithmeticException(){}
+}
+class CastException{
+    CastException(){}
+}
+class ArrayIndexOutOfBoundsException{
+    ArrayIndexOutOfBoundsException(){}
+}

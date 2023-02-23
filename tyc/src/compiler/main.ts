@@ -126,4 +126,9 @@ function main(inputFiles: string[]) {
         console.error(`${e}`);
     }
 }
-main([path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.ty'), ...process.argv.slice(2)]);//将lib/system.ty和其他用户的输入放进待编译文件列表中
+//内置文件
+let builtinSource=[
+    path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.ty'),
+    path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.exception.ty')
+];
+main([...builtinSource, ...process.argv.slice(2)]);//将lib/system.ty和其他用户的输入放进待编译文件列表中

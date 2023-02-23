@@ -35,9 +35,9 @@ NativeTable::NativeTable(const char* filename, StringPool& stringPool)
             item.argList.push_back(argItem);
         }
         items.push_back(item);
-        if (strcmp("_VMLoadNativeLib", stringPool.items[name]) == 0)
+        if (strcmp("system_loadLibrary", stringPool.items[name]) == 0)
         {
-            VMLoadNativeLib = itemIndex;
+            system_loadLibrary = itemIndex;
         }
         nativeMap[stringPool.items[name]] = itemIndex;
         itemIndex++;

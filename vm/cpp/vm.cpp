@@ -44,7 +44,7 @@ void VM::_NativeCall(u64 NativeIndex)
         calculateStack.setSP(calculateStack.getSP() - argSize);
     }
 
-    if (NativeIndex == nativeTable.VMLoadNativeLib)
+    if (NativeIndex == nativeTable.system_loadLibrary)
     {
         auto it = argumentsBuffer.begin();
         HeapItem* arg0 = (HeapItem*)(((u64*)(*it))[0] - sizeof(HeapItem));
@@ -477,7 +477,7 @@ void VM::run()
                 u64 baseObj = calculateStack.pop64();
                 if (baseObj == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -491,7 +491,7 @@ void VM::run()
                 u64 targetObj = calculateStack.pop64();
                 if (targetObj == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -607,7 +607,7 @@ void VM::run()
                 i8 v1 = calculateStack.pop8();
                 if (v2 == 0)
                 {
-                    _VMThrowError(typeTable.system_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
+                    _VMThrowError(typeTable.system_exception_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
                 }
                 else
                 {
@@ -711,7 +711,7 @@ void VM::run()
                 i16 v1 = calculateStack.pop16();
                 if (v2 == 0)
                 {
-                    _VMThrowError(typeTable.system_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
+                    _VMThrowError(typeTable.system_exception_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
                 }
                 else
                 {
@@ -815,7 +815,7 @@ void VM::run()
                 i32 v1 = calculateStack.pop32();
                 if (v2 == 0)
                 {
-                    _VMThrowError(typeTable.system_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
+                    _VMThrowError(typeTable.system_exception_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
                 }
                 else
                 {
@@ -919,7 +919,7 @@ void VM::run()
                 i64 v1 = calculateStack.pop64();
                 if (v2 == 0)
                 {
-                    _VMThrowError(typeTable.system_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
+                    _VMThrowError(typeTable.system_exception_ArithmeticException, irs.ArithmeticException_init, irs.ArithmeticException_constructor);
                 }
                 else
                 {
@@ -1367,7 +1367,7 @@ void VM::run()
                 auto functionObj = calculateStack.top64();
                 if (functionObj == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1433,7 +1433,7 @@ void VM::run()
                 u64 baseObj = calculateStack.pop64();
                 if (baseObj == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1448,7 +1448,7 @@ void VM::run()
                 u64 targetObj = calculateStack.pop64();
                 if (targetObj == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1461,7 +1461,7 @@ void VM::run()
                 auto baseAdd = calculateStack.pop64();
                 if (baseAdd == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1481,14 +1481,14 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
                     HeapItem* heapitem = (HeapItem*)(arrayAddress - sizeof(HeapItem));
                     if (index >= heapitem->sol.length)
                     {
-                        _VMThrowError(typeTable.system_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
+                        _VMThrowError(typeTable.system_exception_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
                     }
                     else
                     {
@@ -1503,14 +1503,14 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
                     HeapItem* heapitem = (HeapItem*)(arrayAddress - sizeof(HeapItem));
                     if (index >= heapitem->sol.length)
                     {
-                        _VMThrowError(typeTable.system_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
+                        _VMThrowError(typeTable.system_exception_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
                     }
                     else
                     {
@@ -1526,14 +1526,14 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
                     HeapItem* heapitem = (HeapItem*)(arrayAddress - sizeof(HeapItem));
                     if (index >= heapitem->sol.length)
                     {
-                        _VMThrowError(typeTable.system_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
+                        _VMThrowError(typeTable.system_exception_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
                     }
                     else
                     {
@@ -1550,14 +1550,14 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
                     HeapItem* heapitem = (HeapItem*)(arrayAddress - sizeof(HeapItem));
                     if (index >= heapitem->sol.length)
                     {
-                        _VMThrowError(typeTable.system_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
+                        _VMThrowError(typeTable.system_exception_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
                     }
                     else
                     {
@@ -1574,14 +1574,14 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
                     HeapItem* heapitem = (HeapItem*)(arrayAddress - sizeof(HeapItem));
                     if (index >= heapitem->sol.length)
                     {
-                        _VMThrowError(typeTable.system_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
+                        _VMThrowError(typeTable.system_exception_ArrayIndexOutOfBoundsException, irs.ArrayIndexOutOfBoundsException_init, irs.ArrayIndexOutOfBoundsException_constructor);
                     }
                     else
                     {
@@ -1595,7 +1595,7 @@ void VM::run()
                 auto arrayAddress = calculateStack.pop64();
                 if (arrayAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1637,7 +1637,7 @@ void VM::run()
                 TypeItem& targetTypeDesc = typeTable.items[ir.operand1];
                 if (srcTypeDesc.desc != targetTypeDesc.desc || srcTypeDesc.innerType != targetTypeDesc.innerType || srcTypeDesc.name != targetTypeDesc.name)
                 {
-                    _VMThrowError(typeTable.system_CastException, irs.CastException_init, irs.CastException_constructor);
+                    _VMThrowError(typeTable.system_exception_CastException, irs.CastException_init, irs.CastException_constructor);
                 }
                 else
                 {
@@ -1665,7 +1665,7 @@ void VM::run()
                 auto objAddress = calculateStack.top64();
                 if (objAddress == 0)
                 {
-                    _VMThrowError(typeTable.system_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
+                    _VMThrowError(typeTable.system_exception_NullPointerException, irs.NullPointerException_init, irs.NullPointerException_constructor);
                 }
                 else
                 {
@@ -1673,7 +1673,7 @@ void VM::run()
                     TypeItem& targetTypeDesc = typeTable.items[ir.operand1];
                     if (srcTypeDesc.desc != targetTypeDesc.desc || srcTypeDesc.innerType != targetTypeDesc.innerType || srcTypeDesc.name != targetTypeDesc.name)
                     {
-                        _VMThrowError(typeTable.system_CastException, irs.CastException_init, irs.CastException_constructor);
+                        _VMThrowError(typeTable.system_exception_CastException, irs.CastException_init, irs.CastException_constructor);
                     }
                 }
             }

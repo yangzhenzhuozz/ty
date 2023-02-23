@@ -1,21 +1,6 @@
-function _VMLoadNativeLib(fileName:byte[],functionNames:byte[][]):void{
+function loadLibrary(fileName:byte[],functionNames:byte[][]):void{
     native
 };
-
-class NullPointerException{
-    NullPointerException(){}
-}
-class ArithmeticException{
-    ArithmeticException(){}
-}
-class CastException{
-    CastException(){}
-}
-class ArrayIndexOutOfBoundsException{
-    ArrayIndexOutOfBoundsException(){}
-}
-
-
 
 class string{
     var buffer:byte[];

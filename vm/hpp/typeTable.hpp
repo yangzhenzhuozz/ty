@@ -20,10 +20,10 @@ class TypeTable
 public:
     u64 length;
     TypeItem* items;
-    i64 system_NullPointerException = -1;
-    i64 system_ArithmeticException = -1;
-    i64 system_CastException = -1;
-    i64 system_ArrayIndexOutOfBoundsException = -1;
+    i64 system_exception_NullPointerException = -1;
+    i64 system_exception_ArithmeticException = -1;
+    i64 system_exception_CastException = -1;
+    i64 system_exception_ArrayIndexOutOfBoundsException = -1;
     i64 system_bool = -1;
     i64 system_byte = -1;
     i64 system_short = -1;
