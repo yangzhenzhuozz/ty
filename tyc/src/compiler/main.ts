@@ -43,6 +43,13 @@ function main(inputFiles: string[]) {
             let reg = /class[\s\r\n]+([a-zA-Z_][a-zA-Z_0-9]*)/g;
             let classNameInFile: string[] = [];
             for (let group: RegExpExecArray | null; (group = reg.exec(sourceItem.source)) != null;) {
+                if (sourceItem.namespace != 'system' && ['void', 'byte', 'short', 'int', 'long', 'double', 'bool', 'string', 'object'].indexOf(group[1]) != -1) {
+                    /**
+                     * 如果是用户自定义命名空间(自己的代码)，且使用了内置类型名字做自己的类型名做类型名，则报错
+                     * 如用户定义了 class int{}
+                     */
+                    throw `不允许自定义类型的名字为${group[1]}`;
+                }
                 classNameInFile.push(group[1]!);
                 className.push(`${sourceItem.namespace}.${group[1]!}`);
                 userTypeDictionary.set(`${sourceItem.namespace}.${group[1]!}`, `${sourceItem.namespace}.${group[1]!}`);//给词法分析添加class名字
