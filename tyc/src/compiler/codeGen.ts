@@ -1167,7 +1167,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
             inContructorRet: undefined,
             functionWrapName: option.functionWrapName
         });//取得location
-        nodeRecursion(scope, node['++'], {
+        let nrRet = nodeRecursion(scope, node['++'], {
             label: undefined,
             frameLevel: undefined,
             isGetAddress: undefined,
@@ -1177,6 +1177,9 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
             inContructorRet: undefined,
             functionWrapName: option.functionWrapName
         });
+        if (nrRet.isRightValueTypeVariable) {
+            throw `右值类型的${node['++'].type!.PlainType!.name}不能执行++操作`;
+        }
         let endIR: IR;
         assert(left.virtualIR != undefined);
         let virtualIR = left.virtualIR;
@@ -1209,7 +1212,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
             inContructorRet: undefined,
             functionWrapName: option.functionWrapName
         });//取得location
-        nodeRecursion(scope, node['--'], {
+        let nrRet = nodeRecursion(scope, node['--'], {
             label: undefined,
             frameLevel: undefined,
             isGetAddress: undefined,
@@ -1219,6 +1222,9 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
             inContructorRet: undefined,
             functionWrapName: option.functionWrapName
         });
+        if (nrRet.isRightValueTypeVariable) {
+            throw `右值类型的${node['--'].type!.PlainType!.name}不能执行++操作`;
+        }
         let endIR: IR;
         assert(left.virtualIR != undefined);
         let virtualIR = left.virtualIR;
@@ -3377,7 +3383,7 @@ export default function programScan() {
             typeName == "system.int" ||
             typeName == "system.long" ||
             typeName == "system.double" ||
-            typeName == "system.object"||
+            typeName == "system.object" ||
             typeName == "@null"
         ) {
             continue;
