@@ -219,9 +219,14 @@ function assertion(obj: any, name: string) {
     }
 }
 export function link(programScope: ProgramScope) {
+    let system_init = programScope.getProp('system.init').prop.type?.FunctionType;
+    if (system_init == undefined || Object.keys(system_init._arguments).length != 0 || TypeUsedSign(system_init.retType!) != 'void') {
+        throw `必须在system命名空间定义一个函数system_init,类型为: ()=>void (无参,无返回值)`;
+    }
+
     let main = programScope.getProp('main').prop.type?.FunctionType;
     if (main == undefined || Object.keys(main._arguments).length != 0 || TypeUsedSign(main.retType!) != 'void') {
-        throw `必须在program域定义一个函数main,类型为: ()=>void (无参,无返回值),后续再考虑有参数和返回值的情况`;
+        throw `必须在最后一个命名空间定义一个函数main,类型为: ()=>void (无参,无返回值)`;
     }
 
     /**
@@ -258,7 +263,10 @@ export function link(programScope: ProgramScope) {
     let call = new IR('abs_call', undefined, undefined, undefined);//初始化@program
     irAbsoluteAddressRelocationTable.push({ sym: '@program_init', ir: call });
     new IR('program_load');
-    new IR('p_getfield', programScope.getPropOffset('main'));
+    new IR('p_getfield', programScope.getPropOffset('system.init'));//调用初始化函数
+    new IR('call');
+    new IR('program_load');
+    new IR('p_getfield', programScope.getPropOffset('main'));//调用最后一个namespace的main函数
     new IR('call');
     new IR('__exit');
 

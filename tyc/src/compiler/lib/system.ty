@@ -1,3 +1,7 @@
+function init(){
+
+};
+
 function loadLibrary(fileName:byte[],functionNames:byte[][]):void{
     native
 };
