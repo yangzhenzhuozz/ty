@@ -1223,7 +1223,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
             functionWrapName: option.functionWrapName
         });
         if (nrRet.isRightValueTypeVariable) {
-            throw `右值类型的${node['--'].type!.PlainType!.name}不能执行++操作`;
+            throw `右值类型的${node['--'].type!.PlainType!.name}不能执行--操作`;
         }
         let endIR: IR;
         assert(left.virtualIR != undefined);
