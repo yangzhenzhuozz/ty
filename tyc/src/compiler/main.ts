@@ -9,6 +9,11 @@ import { Program } from "./program.js";
 import { userTypeDictionary } from "./lexrule.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from 'node:url';
+/**
+ * 1.先识别出所有class id中的id(剔除字符串、注释)
+ * 2.然后注册userTypeDictionary
+ * 3.把源码中所有userType替换成 nameSpace.userType(剔除字符串、注释)
+ */
 function main(inputFiles: string[]) {
     try {
         let sources: { namespace: string, source: string }[] = [];
