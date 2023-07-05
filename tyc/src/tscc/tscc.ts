@@ -560,24 +560,24 @@ class TSCC {
             str += this.userCode;
         }
         str += `
-interface Token {
+export interface Token {
     type: string;
     value: any;
 }
-interface YYTOKEN extends Token{
+export interface YYTOKEN extends Token{
     yytext:string;
 }
-interface Lex {
+export interface Lex {
     yylex(): YYTOKEN;
     yyerror(msg: string): any;
 }
-class ParseException extends Error{
+export class ParseException extends Error{
     constructor(msg:string){
         super(msg);
         super.name='ParseException';
     }
 }
-function Parse(lexer: Lex):any {
+export default function Parse(lexer: Lex):any {
     let state: { [key: string]: string | undefined }[] = JSON.parse(\`${JSON.stringify(gotoTable)}\`);
     let syntaxHead: string[] = [`;
     for (let i = 0; i < this.syntaxs.length; i++) {
@@ -706,8 +706,7 @@ function Parse(lexer: Lex):any {
         return result;
     }
 }
-export {ParseException};
-export default Parse;`;
+`;
         return str;
     }
 

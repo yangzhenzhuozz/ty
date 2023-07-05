@@ -15,8 +15,9 @@ function main(inputFiles: string[]) {
         let className: string[] = [];//所有用户自定义的类型
         let fileNamesSet = new Set<string>();
         for (let input of inputFiles) {
-            if (!input.endsWith('.ty')) {
-                throw `输入文件的后缀必须是以.ty结尾,文件${input}不满足要求`
+            let filePathArray = input.split('\\|/');
+            if (!/[a-z0-9]+\.ty/.test(filePathArray[filePathArray.length - 1])) {
+                throw `文件${input}不满足要求xxx/[a-z0-9]+\.ty的命名规则`
             }
             if (!fileNamesSet.has(path.basename(input, '.ty'))) {
                 fileNamesSet.add(path.basename(input, '.ty'));
@@ -127,7 +128,7 @@ function main(inputFiles: string[]) {
     }
 }
 //内置文件
-let builtinSource=[
+let builtinSource = [
     path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.ty'),
     path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.exception.ty')
 ];

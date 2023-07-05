@@ -84,30 +84,33 @@ class ProgramScope extends Scope {
         }
     }
     public getProp(name: string): { prop: VariableProperties, scope: Scope, crossFunction: boolean } {
+        let primitiveName = name;
         if (this.property[name] == undefined) {
             name = `${spaceNameForScope}.${name}`;//如果默认名字搜索不到，则加上当前命名空间前缀
         }
         if (this.property[name] != undefined) {
             return { prop: this.property[name], scope: this, crossFunction: false };
         } else {
-            throw `试图读取未定义的标识符:${name}`;
+            throw `在命名空间${spaceNameForScope}中试图读取未定义的标识符:${primitiveName}`;
         }
     }
     public getPropOffset(name: string): number {
+        let primitiveName = name;
         if (this.fieldOffsetMap![name] == undefined) {
             name = `${spaceNameForScope}.${name}`;//如果默认名字搜索不到，则加上当前命名空间前缀
         }
         if (this.fieldOffsetMap![name] == undefined) {
-            throw `试图获取未知的属性:${name}`;
+            throw `在命名空间${spaceNameForScope}中试图获取未知的属性:${primitiveName}`;
         }
         return this.fieldOffsetMap![name].offset;
     }
     public getPropSize(name: string): number {
+        let primitiveName = name;
         if (this.fieldOffsetMap![name] == undefined) {
             name = `${spaceNameForScope}.${name}`;//如果默认名字搜索不到，则加上当前命名空间前缀
         }
         if (this.fieldOffsetMap![name] == undefined) {
-            throw `试图获取未知的属性:${name}`;
+            throw `在命名空间${spaceNameForScope}中试图获取未知的属性:${primitiveName}`;
         }
         return this.fieldOffsetMap![name].size;
     }
