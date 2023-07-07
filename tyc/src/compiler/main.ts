@@ -10,9 +10,10 @@ import { userTypeDictionary } from "./lexrule.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from 'node:url';
 /**
- * 1.先识别出所有class id中的id(剔除字符串、注释)
- * 2.然后注册userTypeDictionary
- * 3.把源码中所有userType替换成 nameSpace.userType(剔除字符串、注释)
+ * 1.把nameSpace.xxx先注册成id
+ * 2.识别出所有class id中的id(剔除字符串、注释)
+ * 3.然后注册userTypeDictionary
+ * 4.把源码中所有userType替换成 nameSpace.userType(剔除字符串、注释)
  */
 function main(inputFiles: string[]) {
     try {
@@ -33,7 +34,7 @@ function main(inputFiles: string[]) {
         }
         //添加id解析规则,假设有个命名空间叫做system，则把system.int 解析成id，下一个循环会添加规则把system.int解析成base_type，后添加的优先级较高，所以不影响结果
         for (let sourceItem of sources) {
-            lexer.addRule([`${sourceItem.namespace}.(_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|1|2|3|4|5|6|7|8|9|0)*`,
+            lexer.addRule([`${sourceItem.namespace}.[_a-zA-Z][_a-zA-Z0-9]*`,
             (arg) => {
                 if (userTypeDictionary.has(arg.yytext)) {
                     (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } };

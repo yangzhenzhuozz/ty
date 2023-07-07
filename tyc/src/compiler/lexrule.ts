@@ -1,17 +1,19 @@
 import Lexer from "../lexer/lexer.js";
+import { YYTOKEN } from "./parser.js";
 export let userTypeDictionary = new Map<string, string>();
 //词法规则
-let lexer = new Lexer();
-lexer.addRule(['( |\t|\r|\n)( |\t|\r|\n)*', undefined]);//忽略空格、制表、回车、换行
-lexer.addRule(['//( |\t|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|1|2|3|4|5|6|7|8|9|0)*(\r|\n)|(\r\n)', undefined]);//忽略注释
-lexer.addRule([`"(-|_|\\\\| |:|/|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|1|2|3|4|5|6|7|8|9|0)*"`, (arg) => { arg.value = arg.yytext.slice(1, arg.yytext.length - 1); return "immediate_string"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*b', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*s', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*l', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*d', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*.(1|2|3|4|5|6|7|8|9|0)(1|2|3|4|5|6|7|8|9|0)*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['(_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|1|2|3|4|5|6|7|8|9|0)*',
+let EOF = (arg: YYTOKEN) => { return '$'; };
+let lexer = new Lexer([], EOF);
+lexer.addRule(['( |\t|\r|\n)( |\t|\r|\n)*', () => undefined]);//忽略空格、制表、回车、换行
+lexer.addRule(['//.*\n', () => undefined]);//忽略注释
+lexer.addRule([`"[^"]*"`, (arg) => { arg.value = arg.yytext.slice(1, arg.yytext.length - 1); return "immediate_string"; }]);
+lexer.addRule(['[0-9]*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9]b', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9]s', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9]l', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9]d', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9].[0-9]', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[_a-zA-Z][_a-zA-Z0-9]*',
     (arg) => {
         //在解析模板的时候会用到
         if (userTypeDictionary.has(arg.yytext)) {
@@ -23,29 +25,29 @@ lexer.addRule(['(_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E
         }
     }]);
 lexer.addRule(['=>', (arg) => { arg.value = arg.yytext; return `=>`; }]);
-lexer.addRule(['...', (arg) => { arg.value = arg.yytext; return `...`; }]);
+lexer.addRule(['\\.\\.\\.', (arg) => { arg.value = arg.yytext; return `...`; }]);
 lexer.addRule([',', (arg) => { arg.value = arg.yytext; return `,`; }]);
 lexer.addRule([';', (arg) => { arg.value = arg.yytext; return `;`; }]);
 lexer.addRule([':', (arg) => { arg.value = arg.yytext; return `:`; }]);
 lexer.addRule(['++', (arg) => { arg.value = arg.yytext; return `++`; }]);
-lexer.addRule(['--', (arg) => { arg.value = arg.yytext; return `--`; }]);
+lexer.addRule(['\\-\\-', (arg) => { arg.value = arg.yytext; return `--`; }]);
 lexer.addRule(['%', (arg) => { arg.value = arg.yytext; return `%`; }]);
 lexer.addRule(['~', (arg) => { arg.value = arg.yytext; return `~`; }]);
-lexer.addRule(['^', (arg) => { arg.value = arg.yytext; return `^`; }]);
+lexer.addRule(['\\^', (arg) => { arg.value = arg.yytext; return `^`; }]);
 lexer.addRule(['&', (arg) => { arg.value = arg.yytext; return `&`; }]);
 lexer.addRule(['\\|', (arg) => { arg.value = arg.yytext; return `|`; }]);
 lexer.addRule(['>>', (arg) => { arg.value = arg.yytext; return `>>`; }]);
 lexer.addRule(['<<', (arg) => { arg.value = arg.yytext; return `<<`; }]);
 lexer.addRule(['+', (arg) => { arg.value = arg.yytext; return `+`; }]);
-lexer.addRule(['-', (arg) => { arg.value = arg.yytext; return `-`; }]);
+lexer.addRule(['\\-', (arg) => { arg.value = arg.yytext; return `-`; }]);
 lexer.addRule(['\\*', (arg) => { arg.value = arg.yytext; return `*`; }]);
 lexer.addRule(['/', (arg) => { arg.value = arg.yytext; return `/`; }]);
 lexer.addRule(['=', (arg) => { arg.value = arg.yytext; return `=`; }]);
 lexer.addRule(['\\(', (arg) => { arg.value = arg.yytext; return `(`; }]);
 lexer.addRule(['\\)', (arg) => { arg.value = arg.yytext; return `)`; }]);
 lexer.addRule(['?', (arg) => { arg.value = arg.yytext; return `?`; }]);
-lexer.addRule(['[', (arg) => { arg.value = arg.yytext; return `[`; }]);
-lexer.addRule([']', (arg) => { arg.value = arg.yytext; return `]`; }]);
+lexer.addRule(['\\[', (arg) => { arg.value = arg.yytext; return `[`; }]);
+lexer.addRule(['\\]', (arg) => { arg.value = arg.yytext; return `]`; }]);
 lexer.addRule(['{', (arg) => { arg.value = arg.yytext; return `{`; }]);
 lexer.addRule(['}', (arg) => { arg.value = arg.yytext; return `}`; }]);
 lexer.addRule(['==', (arg) => { arg.value = arg.yytext; return `==`; }]);
@@ -57,7 +59,7 @@ lexer.addRule(['<', (arg) => { arg.value = arg.yytext; return `<`; }]);
 lexer.addRule(['&&', (arg) => { arg.value = arg.yytext; return `&&`; }]);
 lexer.addRule(['\\|\\|', (arg) => { arg.value = arg.yytext; return `||`; }]);
 lexer.addRule(['!', (arg) => { arg.value = arg.yytext; return `!`; }]);
-lexer.addRule(['.', (arg) => { arg.value = arg.yytext; return `.`; }]);
+lexer.addRule(['\\.', (arg) => { arg.value = arg.yytext; return `.`; }]);
 lexer.addRule(['extension', (arg) => { arg.value = arg.yytext; return `extension`; }]);
 lexer.addRule(['native', (arg) => { arg.value = arg.yytext; return `native`; }]);
 lexer.addRule(['var', (arg) => { arg.value = arg.yytext; return `var`; }]);
