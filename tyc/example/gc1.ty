@@ -11,7 +11,7 @@ class MyClass{
     };
 }
 var main=()=>{
-    system._VMLoadNativeLib("dll".buffer,{["main_NativePrintBytesString".buffer]});
+    system.loadLibrary("dll".buffer,{["main_NativePrintBytesString".buffer]});
     try{
         autounwinding(var a=new MyClass();var b=new MyClass();var c=new MyClass()){
 

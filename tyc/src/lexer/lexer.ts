@@ -38,6 +38,10 @@ export default class Lexer {
     }
     public setSource(src: string) {
         this.source = src;
+        this.lastWord = '';
+        this.errorTipsWidth = 50;
+        this.lastWordIndex = 0;
+        this.idx = 0;
     }
     /**
      * 返回值用于后续移除规则,只需要从start移除这条边就行了

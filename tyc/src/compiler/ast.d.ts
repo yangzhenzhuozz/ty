@@ -24,6 +24,7 @@ interface ExtensionMethod {
 interface TypeDef {//定义的类型
     modifier?: 'valuetype' | 'sealed';
     size?: number;
+    namespace:string;//处于的命名空间
     recursiveChecked?: boolean;//是否已经进行了值类型循环包含的检查
     recursiveFlag?: boolean;//递归检查标记
     templates?: string[];//模板列表
@@ -55,7 +56,7 @@ interface ArrayType {
     innerType: TypeUsed;
 }
 interface FunctionType {
-    namsespace:string;//函数处于的命名空间
+    namespace:string;//函数处于的命名空间
     hasFunctionScan?: boolean;//是否已经进行过函数扫描
     isNative?: boolean;//是否为native函数
     _arguments: VariableDescriptor;

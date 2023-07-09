@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { irAbsoluteAddressRelocationTable, stackFrameTable, stackFrameRelocationTable, typeRelocationTable, tmp, typeTable, nowIRContainer, OPCODE, globalVariable, program } from './ir.js';
-import { Scope, BlockScope, ClassScope, ProgramScope, setScopeSpaceName } from './scope.js';
+import { Scope, BlockScope, ClassScope, ProgramScope, setScopeSpaceName, getScopeSpaceName } from './scope.js';
 import { IR, IRContainer } from './ir.js'
 import { FunctionSign, FunctionSignWithArgumentAndRetType, TypeUsedSign } from './lib.js';
 import { classTable, stringPool, typeItemDesc, typeTable as binTypeTable, stackFrameTable as binStackFrameTable, link, nativeTable } from './binaryTools.js'
@@ -2884,6 +2884,7 @@ function functionObjGen(blockScope: BlockScope, fun: FunctionType, option?: { na
     blockScope.parent = undefined;//查询完捕获变量之后切断和外层函数的联系
     //注册函数容器
     program.setDefinedType(functionWrapName, {
+        namespace: '',
         _constructor: {},
         property: property,
         size: globalVariable.pointSize + Object.keys(fun.capture).length * globalVariable.pointSize
@@ -3388,7 +3389,10 @@ export default function programScan() {
         ) {
             continue;
         } else {
+            let lastNameSpace = getScopeSpaceName();
+            setScopeSpaceName(program.getDefinedType(typeName).namespace);
             classScan(programScope.getClassScope(typeName));
+            setScopeSpaceName(lastNameSpace);
         }
     }
     //为所有类生成扩展方法

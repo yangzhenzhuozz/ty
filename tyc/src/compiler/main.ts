@@ -21,7 +21,7 @@ function main(inputFiles: string[]) {
         let className: string[] = [];//所有用户自定义的类型
         let fileNamesSet = new Set<string>();
         for (let input of inputFiles) {
-            let filePathArray = input.split('\\|/');
+            let filePathArray = input.split(/\\|\//);
             if (!/[a-z0-9]+\.ty/.test(filePathArray[filePathArray.length - 1])) {
                 throw `文件${input}不满足要求xxx/[a-z0-9]+\.ty的命名规则`
             }
