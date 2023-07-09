@@ -4,4 +4,7 @@ var main=()=>{
         arr[i]=(object)i;
     }
     gc1.print("abc");
+    var toString=()=>{
+        return "abc";
+    };
 };

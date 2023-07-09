@@ -56,7 +56,7 @@ export default class Lexer {
         return edge;
     }
     public compile() {
-        console.log('如果编译到DFA，后续解析速度会快，但是编译的过程又很耗时');
+        console.log('如果编译到DFA，后续解析速度会快，编译的过程很耗时');
     }
     public removeRule(edge: Edge) {
         let idx = this.nfa.start.edges.indexOf(edge);
@@ -98,17 +98,19 @@ export default class Lexer {
             if (nfaTestRet == undefined) {
                 throw `词法分析失败`;
             }
+            let word: string = this.source.slice(nfaTestRet.start, nfaTestRet.end);
 
             this.lastWordIndex = this.idx;
-            this.lastWord = nfaTestRet.arg.yytext;
+            this.lastWord = word;
 
-            this.idx += nfaTestRet.arg.yytext.length;
-            let type = nfaTestRet.rule(nfaTestRet.arg);
+            this.idx += word.length;
+            let ret: YYTOKEN = { type: '', yytext: word, value: '' };
+            let type = nfaTestRet.rule(ret);
             if (type == undefined) {
                 continue;
             }
-            nfaTestRet.arg.type = type;
-            return nfaTestRet.arg;
+            ret.type = type;
+            return ret;
         }
     }
 }

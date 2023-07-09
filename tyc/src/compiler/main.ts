@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import Parser, { setParserNameSpace } from "./parser.js";
+import Parser, { YYTOKEN, setParserNameSpace } from "./parser.js";
 import lexer from './lexrule.js';
 import fs from 'fs';
 import semanticCheck from './semanticCheck.js'
@@ -47,25 +47,38 @@ function main(inputFiles: string[]) {
         }
         //源码替换阶段
         for (let sourceItem of sources) {
-            let reg = /class[\s\r\n]+([a-zA-Z_][a-zA-Z_0-9]*)/g;
-            let classNameInFile: string[] = [];
-            for (let group: RegExpExecArray | null; (group = reg.exec(sourceItem.source)) != null;) {
-                if (sourceItem.namespace != 'system' && ['void', 'byte', 'short', 'int', 'long', 'double', 'bool', 'string', 'object'].indexOf(group[1]) != -1) {
+            // let reg = /class[\s\r\n]+([a-zA-Z_][a-zA-Z_0-9]*)/g;
+            //收集所有的class name
+            lexer.setSource(sourceItem.source);
+            let lastToken: YYTOKEN | undefined;
+            let classNamesInThisFile: string[] = [];//当前文件中定义的class
+            for (; ;) {
+                let nowToken = lexer.yylex();
+                if (nowToken.type == '$') {
+                    break;
+                }
+                if (lastToken?.type == 'class' && nowToken.type == 'id') {
+                    classNamesInThisFile.push(nowToken.value);
+                }
+                lastToken = nowToken;
+            }
+            for (let classNamesInThisFileItem of classNamesInThisFile) {
+                if (sourceItem.namespace != 'system' && ['void', 'byte', 'short', 'int', 'long', 'double', 'bool', 'string', 'object'].indexOf(classNamesInThisFileItem) != -1) {
                     /**
                      * 如果是用户自定义命名空间(自己的代码)，且使用了内置类型名字做自己的类型名做类型名，则报错
                      * 如用户定义了 class int{}
                      */
-                    throw `不允许自定义类型的名字为${group[1]}`;
+                    throw `不允许自定义类型的名字为${classNamesInThisFileItem}`;
                 }
-                classNameInFile.push(group[1]!);
-                className.push(`${sourceItem.namespace}.${group[1]!}`);
-                userTypeDictionary.set(`${sourceItem.namespace}.${group[1]!}`, `${sourceItem.namespace}.${group[1]!}`);//给词法分析添加class名字
+                className.push(`${sourceItem.namespace}.${classNamesInThisFileItem}`);
+                userTypeDictionary.set(`${sourceItem.namespace}.${classNamesInThisFileItem}`, `${sourceItem.namespace}.${classNamesInThisFileItem}`);//给词法分析添加class名字
             }
-            if (classNameInFile.length > 0) {
+            if (classNamesInThisFile.length > 0) {
                 //在本文件内部替换
-                let classRepalceReg = new RegExp(`(?<![a-zA-Z_\.])(${classNameInFile.map(v => `(${v})`).reduce((p, c) => `${p}|${c}`)})(?![a-zA-Z_0-9])`, 'g');//替换类型,如果有一个类型是myClass，则所有的myClass都替换成namespace.myClass
+                let classRepalceReg = new RegExp(`(?<![a-zA-Z_\.])(${classNamesInThisFile.map(v => `(${v})`).reduce((p, c) => `${p}|${c}`)})(?![a-zA-Z_0-9])`, 'g');//替换类型,如果有一个类型是myClass，则所有的myClass都替换成namespace.myClass
                 sourceItem.source = sourceItem.source.replace(classRepalceReg, `${sourceItem.namespace}.$1`);
             }
+            sourceItem.source = sourceItem.source.replace(/toString/g, '_toString');//把所有的toString统统换成_toString，避免js自带原型链已经有这些内容
         }
 
         //给词法分析添加class名字

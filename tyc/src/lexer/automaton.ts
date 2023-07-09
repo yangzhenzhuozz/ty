@@ -25,7 +25,7 @@ export class FiniteAutomaton {
      * @param start 
      * @returns 
      */
-    public test(str: string, start: number): { rule: (arg: YYTOKEN) => any, arg: YYTOKEN } | undefined {
+    public test(str: string, start: number): { rule: (arg: YYTOKEN) => any, start: number, end: number } | undefined {
         let nowStateSet: Set<State> = new Set([this.start]);
         this.closure(nowStateSet);
         let idx = start;
@@ -75,7 +75,7 @@ export class FiniteAutomaton {
             return undefined;
         } else {
             let rule = endStates.rules.sort((a, b) => b.priority - a.priority)[0];
-            return { rule: rule.r, arg: { yytext: str.slice(start, endStates.idx), type: '', value: '' } };
+            return { rule: rule.r, start: start, end: endStates.idx };
         }
     }
     public closure(states: Set<State>) {
