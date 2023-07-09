@@ -56,7 +56,7 @@ export default class Lexer {
         return edge;
     }
     public compile() {
-        console.log('如果编译到DFA，后续解析速度会快，编译的过程很耗时');
+        console.log('先用NFA处理,如果后续明显感觉性能不够再改用DFA');
     }
     public removeRule(edge: Edge) {
         let idx = this.nfa.start.edges.indexOf(edge);
