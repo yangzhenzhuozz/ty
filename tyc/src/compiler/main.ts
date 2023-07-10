@@ -34,7 +34,7 @@ function main(inputFiles: string[]) {
         }
         //添加id解析规则,假设有个命名空间叫做system，则把system.int 解析成id，下一个循环会添加规则把system.int解析成base_type，后添加的优先级较高，所以不影响结果
         for (let sourceItem of sources) {
-            lexer.addRule([`${sourceItem.namespace}.[_a-zA-Z][_a-zA-Z0-9]*`,
+            lexer.addRule([`${sourceItem.namespace.replaceAll(/\./g,'\\.')}\\.[_a-zA-Z][_a-zA-Z0-9]*`,
             (arg) => {
                 if (userTypeDictionary.has(arg.yytext)) {
                     (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } };
