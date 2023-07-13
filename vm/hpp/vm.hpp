@@ -11,9 +11,10 @@
 #include "./vm.hpp"
 #include "./heap.hpp"
 #include "./nativeTable.hpp"
-#include "../hpp/TCPServer.hpp"
 #include <stack>
 #include <list>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 struct Catch_item
 {
     u64 irAddress = 0;
@@ -60,7 +61,6 @@ private:
     u64 pc = 0;
     u64 program = 0;
 
-    bool isDebug;
     int GCcondition;//触发GC的对象数量
 
     bool VMError = false;
@@ -70,7 +70,6 @@ private:
     void _VMThrowError(u64 type, u64 init, u64 constructor);
     void pop_stack_map(u64 level, bool isThrowPopup);
     void _new(u64 type);
-    void sendStack(TCPServer& tcpserver, const char* msg, Stack& stack);
     void _NativeCall(u64 index);
     void gc(bool force = false);
     void GCRootsSearch(std::list<HeapItem*>& GCRoots);//使用广度优先搜索标记对象
@@ -78,7 +77,6 @@ private:
     void sweep();//清除garbage
     void GCClassFieldAnalyze(std::list<HeapItem*>& GCRoots, u64 dataAddress, u64 classIndex);//分析一个对象，把内部的所有引用类型添加到GCRoots
     void GCArrayAnalyze(std::list<HeapItem*>& GCRoots, u64 dataAddress);//分析一个数组，把内部的所有引用类型添加到GCRoots
-    TCPServer* tcpserver = nullptr;//debugger的时候才初始化
 public:
     VM(StringPool& stringPool, ClassTable& classTable, StackFrameTable& stackFrameTable, SymbolTable& symbolTable, TypeTable& typeTable, IRs& irs, NativeTable& nativeTable, bool isDebug,int GCcondition);
     void run();

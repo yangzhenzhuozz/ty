@@ -11,7 +11,6 @@ VM::VM(StringPool& stringPool, ClassTable& classTable, StackFrameTable& stackFra
     symbolTable(symbolTable),
     typeTable(typeTable),
     irs(irs),
-    isDebug(isDebug),
     varStack(Stack(isDebug)),
     calculateStack(Stack(isDebug)),
     callStack(Stack(isDebug)),
@@ -19,10 +18,6 @@ VM::VM(StringPool& stringPool, ClassTable& classTable, StackFrameTable& stackFra
     unwindNumStack(Stack(isDebug)),
     GCcondition(GCcondition)
 {
-    if (isDebug)
-    {
-        tcpserver = new TCPServer();
-    }
 }
 
 void VM::_NativeCall(u64 NativeIndex)
@@ -262,11 +257,6 @@ void VM::pop_stack_map(u64 level, bool isThrowPopup)
             }
         }
 
-        if (isDebug)
-        {
-            memset((char*)((u64)varStack.getBufferAddress() + varStack.getBP() + stackFrameTable.items[frameItem.frameIndex]->baseOffset), 0xcd, stackFrameTable.items[frameItem.frameIndex]->size);
-        }
-
         varStack.setBP(frameItem.lastBP);//回退BP
         varStack.setSP(varStack.getSP() - stackFrameTable.items[frameItem.frameIndex]->size);//回退上一帧的SP
 
@@ -351,78 +341,8 @@ void VM::run()
     * 这里指的都是VM自身产生的异常，用户代码产生的异常不在此列
     */
     try {
-        char sendBuffer[1024];
-        int breakPoint = -1;
-        bool step = false;
-        if (isDebug)
-        {
-            //循环等待指令
-            for (; ;)
-            {
-                auto msg = tcpserver->receive();
-                if (strcmp(msg, "run") == 0) {
-                    break;
-                }
-                if (strcmp(msg, "gc") == 0) {
-                    gc(true);
-                    break;
-                }
-                else if (sscanf_s(msg, "break %d", &breakPoint) != 0) {
-                }
-                else if (strcmp(msg, "step") == 0) {
-                    step = true;
-                    break;
-                }
-                else
-                {
-                    char sendBuf[1024];
-                    snprintf(sendBuf, sizeof(sendBuf), "unkown msg:%s", msg);
-                    tcpserver->sendMsg(sendBuf);
-                }
-            }
-        }
         for (; pc < irs.length; pc++)
         {
-            if (step || pc == breakPoint)
-            {
-                if (isDebug)
-                {
-                    snprintf(sendBuffer, (int)sizeof(sendBuffer), "update pc %llu", pc);
-                    tcpserver->sendMsg(sendBuffer);
-                    snprintf(sendBuffer, (int)sizeof(sendBuffer), "update bp %llu", varStack.getBP());
-                    tcpserver->sendMsg(sendBuffer);
-                    snprintf(sendBuffer, (int)sizeof(sendBuffer), "update sp %llu", varStack.getSP());
-                    tcpserver->sendMsg(sendBuffer);
-                    sendStack(*tcpserver, "update calculate stack", calculateStack);
-                    sendStack(*tcpserver, "update call stack", callStack);
-                    sendStack(*tcpserver, "update var stack", varStack);
-                    sendStack(*tcpserver, "update unwindhandler stack", unwindHandler);
-                    sendStack(*tcpserver, "update unwindnum stack", unwindNumStack);
-                    step = false;
-                    //循环等待指令
-                    for (; ;)
-                    {
-                        auto msg = tcpserver->receive();
-                        if (strcmp(msg, "run") == 0)
-                        {
-                            break;
-                        }
-                        else if (sscanf_s(msg, "break %d", &breakPoint) != 0)
-                        {
-                        }
-                        else if (strcmp(msg, "step") == 0) {
-                            step = true;
-                            break;
-                        }
-                        else
-                        {
-                            char sendBuf[1024];
-                            snprintf(sendBuf, sizeof(sendBuf), "unkown msg:%s", msg);
-                            tcpserver->sendMsg(sendBuf);
-                        }
-                    }
-                }
-            }
             auto& ir = irs.items[pc];
             switch (ir.opcode)
             {
@@ -1826,10 +1746,6 @@ void VM::run()
         std::cerr << err << std::endl;
     }
 __exit:
-    if (isDebug)
-    {
-        tcpserver->sendMsg("__exit");
-    }
     if (callStack.getBP() != 0 || callStack.getSP() != 0)
     {
         throw "栈不平衡";
@@ -1875,12 +1791,6 @@ void VM::sweep()
         {
             it++;
         }
-    }
-    if (isDebug && garbageCounter != 0)
-    {
-        std::ostringstream oss;
-        oss << "debugger:free " << garbageCounter << " object in this times";
-        tcpserver->sendMsg(oss.str().c_str());
     }
 }
 
@@ -2152,15 +2062,4 @@ void VM::gc(bool force)
 }
 VM::~VM()
 {
-    if (isDebug)
-    {
-        delete tcpserver;
-    }
-}
-
-void VM::sendStack(TCPServer& tcpserver, const char* msg, Stack& stack)
-{
-    int sendLength = (int)stack.getSP();
-    tcpserver.sendMsg(msg);
-    tcpserver.sendData((char*)stack.getBufferAddress() + stack.getSP() - sendLength, sendLength);
 }
