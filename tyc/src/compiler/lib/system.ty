@@ -1,8 +1,15 @@
+/*这是预留的函数,先执行system.init之后才会执行main函数,以后需要加什么初始化代码可以放到这里*/
 function init(){
 
 };
 
+/*VM内置函数,用于加载dll文件*/
 function loadLibrary(fileName:byte[],functionNames:byte[][]):void{
+    native
+};
+
+/*VM内置函数，用于创建新线程*/
+function fork(fun:()=>void):void{
     native
 };
 
