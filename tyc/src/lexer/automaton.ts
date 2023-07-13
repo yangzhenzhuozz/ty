@@ -6,6 +6,7 @@ export class State {
     public resolver: any[] = [];
     public rule: ((text: YYTOKEN) => any) | undefined;
     public priority = -1;
+    public short: boolean = false;//是否最短匹配,默认长匹配
     constructor() {
     }
 }
@@ -59,8 +60,10 @@ export class FiniteAutomaton {
                     priority: number
                 }[], idx: number
             } = { rules: [], idx: idx + 1 };
+            let short: boolean = false;
             for (let s of nowStateSet) {
                 if (s.rule != undefined) {
+                    short = s.short;
                     tmpEnds.rules.push({
                         r: s.rule,
                         priority: s.priority
@@ -69,6 +72,9 @@ export class FiniteAutomaton {
             }
             if (tmpEnds.rules.length != 0) {
                 endStates = tmpEnds;
+                if (short) {//如果是执行最短匹配，遇到可结束状态立马中断
+                    break;
+                }
             }
         }
         if (endStates == undefined) {

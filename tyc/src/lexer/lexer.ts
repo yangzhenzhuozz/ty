@@ -3,7 +3,7 @@ import { Edge } from "./edge.js";
 import { LexerForREG } from "./lexerForREG.js";
 import Parse, { YYTOKEN } from "./parser.js";
 export default class Lexer {
-    private rule: [string, (arg: YYTOKEN) => any][];
+    private rule: ([string, ((arg: YYTOKEN) => any)] | [string, ((arg: YYTOKEN) => any), boolean])[];//第一个参数是正则，第二个是回调,第三个是是否最短匹配
     private nfa: FiniteAutomaton;
     private idx = 0;//当前下标
     private source: string = '';
@@ -16,7 +16,7 @@ export default class Lexer {
     private lastWordIndex = 0;//上次解析字符的下标
     //----服务于yyerror----
 
-    constructor(rule: [string, (arg: YYTOKEN) => any][], EOF: ((arg: YYTOKEN) => any)) {
+    constructor(rule: ([string, ((arg: YYTOKEN) => any)] | [string, ((arg: YYTOKEN) => any), boolean])[], EOF: ((arg: YYTOKEN) => any)) {
         this.rule = rule;
         this.endOfFile = EOF;
 
@@ -25,6 +25,7 @@ export default class Lexer {
             let lexer = new LexerForREG(r[0]);
             let nfa = Parse(lexer) as FiniteAutomaton;
             nfa.end.rule = r[1];
+            nfa.end.short = r[2] == undefined ? false : r[2];
             nfa.end.priority = this.priorityIdx++;
             nfas.push(nfa);
         }
@@ -46,10 +47,11 @@ export default class Lexer {
     /**
      * 返回值用于后续移除规则,只需要从start移除这条边就行了
      */
-    public addRule(r: [string, (arg: YYTOKEN) => any]): Edge {
+    public addRule(r: ([string, ((arg: YYTOKEN) => any)] | [string, ((arg: YYTOKEN) => any), boolean])): Edge {
         let lexer = new LexerForREG(r[0]);
         let nfa = Parse(lexer) as FiniteAutomaton;
         nfa.end.rule = r[1];
+        nfa.end.short = r[2] == undefined ? false : r[2];
         nfa.end.priority = this.priorityIdx++;
         let edge = new Edge(-1, -1, nfa.start);
         this.nfa.start.edges.push(edge);
