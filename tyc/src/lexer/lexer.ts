@@ -58,7 +58,7 @@ export default class Lexer {
         return edge;
     }
     public compile() {
-        console.log('先用NFA处理,如果后续明显感觉性能不够再改用DFA');
+        console.log('词法分析器先用NFA处理,如果后续明显感觉性能不够再改用DFA');
     }
     public removeRule(edge: Edge) {
         let idx = this.nfa.start.edges.indexOf(edge);

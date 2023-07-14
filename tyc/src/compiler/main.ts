@@ -34,7 +34,7 @@ function main(inputFiles: string[]) {
         }
         //添加id解析规则,假设有个命名空间叫做system，则把system.int 解析成id，下一个循环会添加规则把system.int解析成base_type，后添加的优先级较高，所以不影响结果
         for (let sourceItem of sources) {
-            lexer.addRule([`${sourceItem.namespace.replaceAll(/\./g,'\\.')}\\.[_a-zA-Z][_a-zA-Z0-9]*`,
+            lexer.addRule([`${sourceItem.namespace.replaceAll(/\./g, '\\.')}\\.[_a-zA-Z][_a-zA-Z0-9]*`,
             (arg) => {
                 if (userTypeDictionary.has(arg.yytext)) {
                     (arg.value as TypeUsed) = { PlainType: { name: arg.yytext } };
@@ -146,9 +146,14 @@ function main(inputFiles: string[]) {
         console.error(`${e}`);
     }
 }
-//内置文件
-let builtinSource = [
-    path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.ty'),
-    path.join(dirname(fileURLToPath(import.meta.url)), 'lib', 'system.exception.ty')
-];
+//先把内置ty文件添加到待编译文件列表中
+let libPath = path.join(dirname(fileURLToPath(import.meta.url)), 'lib');
+let libFiles = fs.readdirSync(libPath);
+let builtinSource: string[] = [];
+for (let file of libFiles) {
+    let fileInfo = fs.statSync(path.join(libPath, file));
+    if (fileInfo.isFile()) {
+        builtinSource.push(path.join(libPath, file))
+    }
+}
 main([...builtinSource, ...process.argv.slice(2)]);//将lib/system.ty和其他用户的输入放进待编译文件列表中

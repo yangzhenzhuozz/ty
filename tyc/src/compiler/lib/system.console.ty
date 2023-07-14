@@ -1,0 +1,7 @@
+function WriteLine(str:string){
+    NativePrintBytesString(str.buffer);
+};
+
+function NativePrintBytesString(buffer:byte[]):void{
+    native
+};
