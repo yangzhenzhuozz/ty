@@ -3303,7 +3303,7 @@ export default function programScan() {
                 putfield(prop.type!, offset, nr.truelist, nr.falselist);
             } else if (prop.type?.FunctionType && (prop.type?.FunctionType.body || prop.type?.FunctionType.isNative)) {//如果是函数定义则生成函数
                 let blockScope = new BlockScope(programScope, prop.type.FunctionType, prop.type?.FunctionType.body!, { program });
-                let fun = functionObjGen(blockScope, prop.type.FunctionType, { nativeName: `${spaceName}_${variableName}` });
+                let fun = functionObjGen(blockScope, prop.type.FunctionType, { nativeName: `${spaceName}.${variableName}`.replaceAll('.','_') });//把所有nativeFunctioin的.全部换成下划线
                 new IR('program_load');
                 let newIR = new IR('newFunc', undefined, undefined, undefined);
                 irAbsoluteAddressRelocationTable.push({ sym: fun.text, ir: newIR });
