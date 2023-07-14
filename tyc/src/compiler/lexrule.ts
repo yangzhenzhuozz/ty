@@ -5,7 +5,7 @@ export let userTypeDictionary = new Map<string, string>();
 let EOF = (arg: YYTOKEN) => { return '$'; };
 let lexer = new Lexer([], EOF);
 lexer.addRule(['( |\t|\r|\n)( |\t|\r|\n)*', () => undefined]);//忽略空格、制表、回车、换行
-lexer.addRule(['/\\*([^\\*]|[^/])*\\*/', () => undefined, true]);//忽略多行注释
+lexer.addRule(['/\\*.*\\*/', () => undefined, true]);//忽略多行注释
 lexer.addRule(['//.*\n', () => undefined, true]);//忽略单行注释
 lexer.addRule([`"[^"]*"`, (arg) => { arg.value = arg.yytext.slice(1, arg.yytext.length - 1); return "immediate_string"; }]);
 lexer.addRule(['[0-9]*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
