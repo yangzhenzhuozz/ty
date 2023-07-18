@@ -15,7 +15,7 @@
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ],
-            "args": ["d:\\Users\\john\\Desktop\\ty\\test\\output"]
+            "args": ["D:\\Users\\john\\Desktop\\ty\\tyc\\output"]
         }
     ]
 }

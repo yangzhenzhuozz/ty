@@ -1,10 +1,12 @@
 var main=()=>{
-    system.console.WriteLine("hello world");
-    var a=1;
     var thread=()=>{
-        system.console.WriteLine(a.toString());
+        var str="new Thread";
+        for(;;){
+            system.console.WriteLine(str);
+        }
     };
     system.fork(thread);
+    for(;;){}
 };
 extension function toString(this int value):string{
     var tmp=value;
