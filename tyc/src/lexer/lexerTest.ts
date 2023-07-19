@@ -2,14 +2,15 @@ import Lexer from "./lexer.js";
 import { YYTOKEN } from "./parser.js";
 function main() {
     let lexRule: ([string, ((arg: YYTOKEN) => any)] | [string, ((arg: YYTOKEN) => any), boolean])[] = [
-        ['/\\*([^\\*]|[^/])*\\*/', (arg) => {
-            console.log(arg.yytext);
-            return "comment";
-        }, true]
+        [`"(([^\\\\][^"])|[^"])*"`,
+            (arg) => {
+                console.log(arg.yytext);
+                return "comment";
+            }, true]
     ];
     let EOF = () => { return '文件结束'; };
     let lexer = new Lexer(lexRule, EOF);
-    lexer.setSource(`/*aaa*/aa*/`);
+    lexer.setSource(`"你好\\"啊"`);
     lexer.yyerror('err');
     console.log(lexer.yylex());
     console.log(lexer.yylex());

@@ -1,9 +1,8 @@
 var main=()=>{
     var thread=()=>{
-        var str="new Thread";
-        for(;;){
-            system.console.WriteLine(str);
-        }
+        var str="我草，终于支持中文了\n";
+        system.console.WriteLine(str);
+        system.console.WriteLine(123.toString());
     };
     system.fork(thread);
     for(;;){}

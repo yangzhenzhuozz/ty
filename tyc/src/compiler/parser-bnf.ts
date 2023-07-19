@@ -241,7 +241,7 @@ export function setParserNameSpace(name: string) {
                         }
                     }
                     let ret: { [key: string]: TypeDef } = JSON.parse("{}");//为了生成的解析器不报红
-                    ret[basic_type.PlainType!.name] = {namespace: namespaceforParser, modifier: modifier, templates: template_declare, property: property, extends: extends_declare, _constructor: class_units._constructor };
+                    ret[basic_type.PlainType!.name] = { namespace: namespaceforParser, modifier: modifier, templates: template_declare, property: property, extends: extends_declare, _constructor: class_units._constructor };
                     return ret;
                 }
             }
@@ -2453,28 +2453,19 @@ export function setParserNameSpace(name: string) {
                 action: function ($, s): ASTNode {
                     let str = $[0] as string;
                     let ASTNodes: ASTNode[] = [];
-                    for (let i = 0; i < str.length; i++) {
-                        let ch = str[i];
-                        if (ch == '\\') {
-                            if (i == str.length - 1) {
-                                throw `字符串末尾的转义符无法处理`;
-                            } else {
-                                i++;
-                                ch = str[i];
-                                switch (ch) {
-                                    case 'a': ch = '\a'; break;
-                                    case 'b': ch = '\b'; break;
-                                    case 'f': ch = '\f'; break;
-                                    case 'n': ch = '\n'; break;
-                                    case 'r': ch = '\r'; break;
-                                    case 't': ch = '\t'; break;
-                                    case 'v': ch = '\v'; break;
-                                    case '\\': ch = '\\'; break;
-                                    default: break;
-                                }
-                            }
-                        }
-                        ASTNodes.push({ desc: "ASTNode", immediate: { primiviteValue: ch.charCodeAt(0) + 'b' } });//变成单个byte类型
+                    str = str
+                        .replaceAll('\\a', '\a')
+                        .replaceAll('\\b', '\b')
+                        .replaceAll('\\f', '\f')
+                        .replaceAll('\\n', '\n')
+                        .replaceAll('\\r', '\r')
+                        .replaceAll('\\t', '\t')
+                        .replaceAll('\\v', '\v')
+                        .replaceAll('\\\\', '\\')
+                        .replaceAll('\\"', '"');
+                    let buffer = (new TextEncoder()).encode(str);
+                    for (let i = 0; i < buffer.length; i++) {
+                        ASTNodes.push({ desc: "ASTNode", immediate: { primiviteValue: buffer[i] + 'b' } });//变成单个byte类型
                     }
                     let newString: ASTNode = {
                         desc: 'ASTNode',
