@@ -1,0 +1,16 @@
+class thread{
+    var task:()=>void;
+    var _name:string;
+    get name():string{
+        return _name;
+    };
+    set name(v:string){
+        _name=v;
+    };
+    thread(t:()=>void){
+        this.task=t;
+    }
+    function start(){
+        system.fork(task);
+    };
+}

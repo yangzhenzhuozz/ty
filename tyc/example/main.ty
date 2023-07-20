@@ -1,11 +1,19 @@
 var main=()=>{
-    var thread=()=>{
-        var str="我草，终于支持中文了\n";
+    var f=()=>{
+        var str="终于支持中文了";
         system.console.WriteLine(str);
         system.console.WriteLine(123.toString());
+        system.console.WriteLine(add<int>(1,2).toString());
     };
-    system.fork(thread);
+    var thread=new system.dispatcher.thread(f);
+    thread.name="哈哈哈";
+    system.console.WriteLine(thread.name);
+    thread.start();
     for(;;){}
+};
+function add<T>(a:T,b:T):T{
+    system.console.WriteLine("这是一个模板函数测试");
+    return a+b;
 };
 extension function toString(this int value):string{
     var tmp=value;
