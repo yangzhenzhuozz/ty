@@ -1,10 +1,20 @@
-# 目录说明
-> |目录|内容|编译运行指导|
-> |-|-|-|
-> |debugger|vm调试器，配合vm启动参数-D使用|client是用vue写的,server是用typescript写的，很容易就跑起来了(现在已经移除了VM的调试功能,但是仍然可以用debugger看生成的字节码)|
-> |doc|文档|无|
-> |tyc|编译器|查看readme.md|
-> |vm|vm|查看readme.md(已经移除，在新的VM仓库下,旧版VM支持和debugger调试字节码，但是调试器不支持多线程，所以已经被移除了)|
----
-+ tyc用了自己写的LR(1)分析器(tscc)实现，这个LR(1)文法分析器在TSCC项目里
----
+编译步骤
+1. 执行 "npm i @types/node"，用到了node的fs模块读文件，不引入tsc会报错
+2. 设置tsc为监视模式，开始监视文件，因为lexer和compiler的parser都还没有生成，这时候会报一些错误
+3. 在根目录执行"node .\dist\lexer\RegulaerExpressionSyntax.js"生成lexer的parser,执行成功之后会在"src/lexer/"目录下生成一个文件"parser.ts"
+4. 在根目录执行"node .\dist\compiler\parser-bnf.js"生成compiler的parser,执行成功之后会在"src/compiler/"目录下生成一个文件"parser.ts"
+5. 因为tsc设置成了监视模式，等待tsc编译步骤3、4生成的两个parser(步骤3、4先后顺序不限)
+6. 把"src/compiler/"下面的"lib"目录复制到/dist/compiler下面
+7. 在根目录执行"npm i -g ./"安装
+8. cd 到 example目录
+8. 执行"tyc test1.ty test2.ty"即可编译
+
+build命令执行情况如下：
+```
+tsc --先用tsconfig.json编译一部分ts代码到js
+node dist\lexer\reg_exp_bnf.js --生成正则的parser.ts
+tsc --把刚刚生成的正则parser.ts编译到js
+node dist\compiler\parser-bnf.js --生成编译器的parser.ts
+tsc --把刚刚生成的编译器parser.ts编译到js
+copyfiles -u 2 src/compiler/lib/* dist/compiler --把lib目录复制到 dist/compiler目录
+```
