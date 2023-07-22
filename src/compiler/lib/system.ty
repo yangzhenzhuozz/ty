@@ -1,9 +1,12 @@
 /*这是预留的函数,先执行system.init之后才会执行main函数,以后需要加什么初始化代码可以放到这里*/
 function init(){
     loadLibrary("system".buffer,{["system_console_NativePrintBytesString".buffer]});
+    var mainThread=new system.dispatcher.thread();
+    mainThread.name="main";
+    setCurrentThread(mainThread);
 };
 
-/*VM内置函数,用于加载dlaal文件*/
+/*VM内置函数,用于加载dll文件*/
 function loadLibrary(fileName:byte[],functionNames:byte[][]):void{
     native
 };
@@ -13,6 +16,20 @@ function fork(fun:()=>void):void{
     native
 };
 
+/*VM内置函数，用于阻塞线程*/
+function yield():void{
+    native
+};
+
+/*VM内置函数，设置当前线程*/
+function getCurrentThread():system.dispatcher.thread{
+    native
+};
+
+/*VM内置函数，获取当前线程*/
+function setCurrentThread(thread:system.dispatcher.thread):void{
+    native
+};
 
 //下面几种类型是魔法类,里面的的操作符重载、构造函数等都是由编译器特殊处理
 /*

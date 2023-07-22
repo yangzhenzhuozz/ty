@@ -10,7 +10,16 @@ class thread{
     thread(t:()=>void){
         this.task=t;
     }
+    thread(){
+    }
     function start(){
-        system.fork(task);
+        if((object)task==null){
+            throw "the task of thread is null";
+        }else{
+            system.fork(()=>{
+                system.setCurrentThread(this);
+                task();
+            });
+        }
     };
 }

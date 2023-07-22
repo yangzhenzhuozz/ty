@@ -1148,6 +1148,7 @@ function functionScan(blockScope: BlockScope, fun: FunctionType): TypeUsed {
         if (fun.retType == undefined) {
             throw `无法推导函数返回值类型`;
         }
+        setScopeSpaceName(lastNameSpace);//还原命名空间
         return fun.retType;
     } else {
         (fun).hasFunctionScan = true;
@@ -1156,6 +1157,7 @@ function functionScan(blockScope: BlockScope, fun: FunctionType): TypeUsed {
         if (fun.retType == undefined) {
             throw `函数声明一定有返回值声明`;
         }
+        setScopeSpaceName(lastNameSpace);//还原命名空间
         return fun.retType;
     }
     //为所有参数创建一个def节点，要把参数按顺序压入block最前面,因为是用unshift压入的，所以遍历参数的时候要逆序

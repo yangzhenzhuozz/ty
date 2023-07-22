@@ -11,11 +11,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\output\\start.js",
+            "program": "${workspaceFolder}/output/start.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ],
-            "args": ["D:\\Users\\john\\Desktop\\ty\\tyc\\output"]
+            "args": ["D:/Users/john/Desktop/ty/output"]
         }
     ]
 }

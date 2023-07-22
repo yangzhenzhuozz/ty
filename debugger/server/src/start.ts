@@ -16,6 +16,6 @@ app.all('*', function (req, res, next) {
 app.use(DataRouter);
 app.use(fileWatcher);
 
-app.listen(8081, () => {
+app.listen(10087, () => {
     console.log(`服务已启动`);
 });

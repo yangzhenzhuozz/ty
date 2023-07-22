@@ -68,10 +68,10 @@ export default defineComponent({
   },
   methods: {
     async loadDebugSymbol() {
-      this.stringPool = await (await fetch(`http://localhost:8081/data/stringPool.json`)).json();
-      this.nativeTable = await (await fetch(`http://localhost:8081/data/nativeTable.json`)).json();
-      this.stackFrameTable = await (await fetch(`http://localhost:8081/data/stackFrameTable.json`)).json();
-      this.typeTable = (await (await fetch(`http://localhost:8081/data/typeTable.json`)).json()).map((v: any) => {
+      this.stringPool = await (await fetch(`http://localhost:10087/data/stringPool.json`)).json();
+      this.nativeTable = await (await fetch(`http://localhost:10087/data/nativeTable.json`)).json();
+      this.stackFrameTable = await (await fetch(`http://localhost:10087/data/stackFrameTable.json`)).json();
+      this.typeTable = (await (await fetch(`http://localhost:10087/data/typeTable.json`)).json()).map((v: any) => {
         let desc;
         switch (v.desc) {
           case 0: desc = 'PlaintObj'; break;
@@ -84,12 +84,12 @@ export default defineComponent({
           desc
         };
       });
-      let primitiveIRTable = (await (await fetch(`http://localhost:8081/data/irTable.json`)).json());
+      let primitiveIRTable = (await (await fetch(`http://localhost:10087/data/irTable.json`)).json());
       this.irTable = new Map<string, string>();
       for (let item of primitiveIRTable) {
         this.irTable.set(item[1], item[0]);
       }
-      this.text = (await (await fetch(`http://localhost:8081/data/text.json`)).json()).map((v: any) => {
+      this.text = (await (await fetch(`http://localhost:10087/data/text.json`)).json()).map((v: any) => {
         switch (v.opCode) {
           case 'push_stack_map':
             v.operand1 = `${v.operand1} frameSize:${this.stackFrameTable[v.operand1].size}`;
@@ -147,7 +147,7 @@ export default defineComponent({
       }
     },
     initWebScoket() {
-      this.websocket = new WebSocket(`ws://localhost:8081/command`);
+      this.websocket = new WebSocket(`ws://localhost:10087/command`);
       this.websocket.onclose = () => {
         this.websocket = undefined;
       };
