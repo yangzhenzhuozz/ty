@@ -2,6 +2,7 @@
 function init(){
     system.console.init();
     system.dispatcher.init();
+    system.net.init();
 
     var mainThread=new system.dispatcher.thread();
     mainThread.name="main";
@@ -56,6 +57,10 @@ class string{
             newBuffer[this.buffer.length+i]=b.buffer[i];
         }
         return new string(newBuffer);
+    };
+
+    operator [] ( idx : int ) : byte {
+        return buffer[idx];
     };
 }
 

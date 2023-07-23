@@ -1,3 +1,83 @@
-class socket{
-    
+function init(){
+    system.loadLibrary("system_net".buffer,{[
+        "system_net_ip2intNative".buffer,
+        "system_net_createServerSocket".buffer,
+        "system_net_listen".buffer,
+        "system_net_accept".buffer,
+        "system_net_send".buffer,
+        "system_net_read".buffer
+    ]});
+};
+class Socket{
+    var socket:object;
+    Socket(s:object){
+        socket=s;
+    }
+    function sendString(msg:string):int{
+        return send(msg.buffer);
+    };
+    function send(buf:byte[]):int{
+        return system.net.send(socket,buf);
+    };
+    function read(buf:byte[]):int{
+        return system.net.read(socket,buf);
+    };
 }
+class ServerSocket{
+    var IPAddress:int;
+    var port:int;
+    var _socket:object;
+    ServerSocket(host:string,port:int){
+        IPAddress=ip2int(host);
+        if(IPAddress==0){
+            throw "无效的ip地址:"+host;
+        }
+        this.port=port;
+        _socket=createServerSocket(IPAddress,port);
+        if(_socket==null){
+            throw "创建socket失败";
+        }
+    }
+    function listen(len:int){
+        var ret=system.net.listen(_socket,len);
+        if(ret<0){
+            throw "listen失败";
+        }
+    };
+    function accept():Socket{
+        var clientSocket=system.net.accept(_socket);
+        if(clientSocket==null){
+            throw "accept失败";
+        }
+        return new Socket(clientSocket);
+    };
+}
+
+function accept(_socket:object):object{
+    native
+};
+
+function listen(_socket:object,len:int):int{
+    native
+};
+
+function send(_socket:object,buffer:byte[]):int{
+    native
+};
+
+function read(_socket:object,buffer:byte[]):int{
+    native
+};
+
+function createServerSocket(address:int,port:int):object{
+    native
+};
+
+function ip2int(host:string):int{
+    return ip2intNative(host.buffer);
+};
+
+//实在懒得写解析ip的代码了，用c++的算了
+function ip2intNative(buffer:byte[]):int{
+    native
+};

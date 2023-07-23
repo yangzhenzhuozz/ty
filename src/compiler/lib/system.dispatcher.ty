@@ -6,9 +6,9 @@ function init(){
     ]});
 };
 
-class mutex{
+class Mutex{
     var _mutex:object;
-    mutex(){
+    Mutex(){
         _mutex=generateMutex();
     }
     function lock(){
