@@ -31,6 +31,11 @@ function setCurrentThread(thread:system.dispatcher.thread):void{
     native
 };
 
+/*VM内置函数，申请一个互斥锁，申请的对象会在GCRoot中特殊标记*/
+function allocMutex():object{
+    native
+};
+
 //下面几种类型是魔法类,里面的的操作符重载、构造函数等都是由编译器特殊处理
 /*
 1.源码中的"abc"会被编译器处理成byte数组,并构造一个string

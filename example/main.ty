@@ -1,17 +1,14 @@
+class mutex{
+    var mutex_p:object;
+    mutex(){}
+}
 var main=()=>{
-    var f=()=>{
-        var str="终于支持中文了";
-        system.console.WriteLine(str);
-        system.yield();
-        system.console.WriteLine(system.getCurrentThread().name);
-    };
-    var thread=new system.dispatcher.thread(f);
-    thread.name="哈哈哈";
-    thread.start();
-    for(;;){
-        //add<int>(1,2);
-        //system.console.WriteLine(system.getCurrentThread().name);
+    {
+        var obj=new mutex();
+        obj.mutex_p=system.allocMutex();
     }
+    system.console.WriteLine("中文测试");
+    for(;;){}
 };
 function add<T>(a:T,b:T):T{
     //system.console.WriteLine("这是一个模板函数测试");
