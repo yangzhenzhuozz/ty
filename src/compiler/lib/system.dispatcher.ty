@@ -1,3 +1,32 @@
+function init(){
+    system.loadLibrary("system_dispatcher".buffer,{[
+        "system_dispatcher_generateMutex".buffer,
+        "system_dispatcher_mutexLock".buffer,
+        "system_dispatcher_mutexUnlock".buffer
+    ]});
+};
+
+class mutex{
+    var _mutex:object;
+    mutex(){
+        _mutex=generateMutex();
+    }
+    function lock(){
+        mutexLock(_mutex);
+    };
+    function unlock(){
+        mutexUnlock(_mutex);
+    };
+}
+function generateMutex():object{
+    native
+};
+function mutexLock(_mutex:object):void{
+    native
+};
+function mutexUnlock(_mutex:object):void{
+    native
+};
 class thread{
     var task:()=>void;
     var _name:string;

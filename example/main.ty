@@ -1,11 +1,11 @@
-class mutex{
-    var mutex_p:object;
-    mutex(){}
-}
+function getMutex():object{
+    native
+};
 var main=()=>{
     {
-        var obj=new mutex();
-        obj.mutex_p=system.allocMutex();
+       var mutex=new system.dispatcher.mutex();
+       mutex.lock();
+       mutex.unlock();
     }
     system.console.WriteLine("中文测试");
     for(;;){}

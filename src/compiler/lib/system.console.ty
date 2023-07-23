@@ -1,3 +1,7 @@
+function init(){
+    system.loadLibrary("system_console".buffer,{["system_console_NativePrintBytesString".buffer]});
+};
+
 function WriteLine(str:string){
     NativePrintBytesString(str.buffer);
 };

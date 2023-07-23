@@ -1,6 +1,8 @@
 /*这是预留的函数,先执行system.init之后才会执行main函数,以后需要加什么初始化代码可以放到这里*/
 function init(){
-    loadLibrary("system".buffer,{["system_console_NativePrintBytesString".buffer]});
+    system.console.init();
+    system.dispatcher.init();
+
     var mainThread=new system.dispatcher.thread();
     mainThread.name="main";
     setCurrentThread(mainThread);
@@ -28,11 +30,6 @@ function getCurrentThread():system.dispatcher.thread{
 
 /*VM内置函数，获取当前线程*/
 function setCurrentThread(thread:system.dispatcher.thread):void{
-    native
-};
-
-/*VM内置函数，申请一个互斥锁，申请的对象会在GCRoot中特殊标记*/
-function allocMutex():object{
     native
 };
 
