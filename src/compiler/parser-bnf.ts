@@ -1055,11 +1055,11 @@ export function setParserNameSpace(name: string) {
         {
             "operator_overload:operator [ ] ( id : type ) : type { statements } ;": {
                 action: function ($, s): { [key: string]: FunctionType } {
-                    let id = $[3] as string;
-                    let op: opType | opType2 = $[1];
-                    let parameterType = $[5] as TypeUsed;
-                    let statements = $[10] as Block;
-                    let retType = $[8] as TypeUsed;
+                    let id = $[4] as string;
+                    let op: opType | opType2 = '[]';
+                    let parameterType = $[6] as TypeUsed;
+                    let statements = $[11] as Block;
+                    let retType = $[9] as TypeUsed;
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {
@@ -1556,10 +1556,10 @@ export function setParserNameSpace(name: string) {
         {
             "operator_overload:operator [ ] ( id : type ) : type { native } ;": {
                 action: function ($, s): { [key: string]: FunctionType } {
-                    let id = $[3] as string;
-                    let op: opType | opType2 = $[1];
-                    let parameterType = $[5] as TypeUsed;
-                    let retType = $[8] as TypeUsed;
+                    let id = $[4] as string;
+                    let op: opType | opType2 = '[]';
+                    let parameterType = $[6] as TypeUsed;
+                    let retType = $[9] as TypeUsed;
                     let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
                     argument[id] = { variable: 'var', type: parameterType };
                     let fun: FunctionType = {

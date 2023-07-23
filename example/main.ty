@@ -1,35 +1,53 @@
+/*
+var main=()=>{}
+等效于
+function main():void{}
+两者几乎拥有完全相同的功能,
+区别只在于lambda表达式不能预先定义返回值，假设main内部再调用main，会造成无法推导返回值
+*/
 var main=()=>{
-   var s=system.console.ReadLine();    
-   system.console.WriteLine(s);
+    { //这里放一个block是为了测试GC的精准度,需要正确释放外部资源(比如这里的socket)
+        try{    //创建Socket很有可能失败，所以需要捕获异常
+            var socket=new system.net.ServerSocket("127.0.0.1",10086);
+            socket.listen(0);
+            var client = socket.accept();
+
+            var pos=0;
+            //lambda测试
+            var append=(dest:byte[],src:byte[],len:int)=>{
+                for(var idx=0;idx<len;idx++){
+                    dest[pos]=src[idx];
+                    pos++;//闭包测试
+                }
+            };
+            
+            var msgbuf=new byte[1024];
+            for(;;){
+                var buf=new byte[1024];
+                var recLen=client.read(buf);
+                buf[recLen]=0b;  //0b表示byte类型的的0
+                //收到换行符则跳出
+                if(buf[recLen-1]=="\n"[0]){
+                    msgbuf[pos]=0b;
+                    system.console.WriteLine("收到数据长度:"+pos.toString());
+                    system.console.WriteLine(new string(msgbuf));
+                    break;
+                }else{
+                    append(msgbuf,buf,recLen);
+                }
+            }
+
+            var sendLen=client.sendString("hello world");
+            system.console.WriteLine("发送数据'hello world'长度:"+sendLen.toString());
+
+        }catch(e:string){
+            system.console.WriteLine(e);
+        }
+    }//退出block，立即GC
+    system.console.WriteLine("end");
 };
+
+//模板函数测试
 function add<T>(a:T,b:T):T{
-    //system.console.WriteLine("这是一个模板函数测试");
     return a+b;
 };
-extension function toString(this int value):string{
-    var tmp=value;
-    var baseCode="0".buffer[0];
-    if(tmp<0){
-        tmp=-tmp;
-    }
-    var len=1;
-    for(;;){
-        tmp=tmp/10;
-        if(tmp==0){
-            break;
-        }
-        len++;
-    }
-    tmp=value;
-    var buffer=new byte[tmp<0?len+1:len];
-    if(tmp<0){
-        buffer[0]="-".buffer[0];
-        tmp=-tmp;
-    }
-    var sign=value;
-    for(var i=0;i<len;i++){
-        buffer[sign<0?len-i:len-i-1]=(byte)(tmp%10)+baseCode;
-        tmp=tmp/10;
-    }
-    return new string(buffer);
-}

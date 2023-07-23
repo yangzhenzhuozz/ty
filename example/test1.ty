@@ -1,6 +1,0 @@
-class MyClass<T>{
-    MyClass(){}
-    function f(v:T){
-        return v.toString();
-    };
-}
