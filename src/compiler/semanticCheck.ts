@@ -523,6 +523,11 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
         let opRet = OperatorOverLoad(scope, node[op]!.leftChild, node[op]!.rightChild, node, op);
         result = { type: opRet.type, location: opRet.location, hasRet: false };
     }
+    else if (node['!='] != undefined) {
+        let op = '!=' as opType;
+        let opRet = OperatorOverLoad(scope, node[op]!.leftChild, node[op]!.rightChild, node, op);
+        result = { type: opRet.type, location: opRet.location, hasRet: false };
+    }
     else if (node['||'] != undefined) {
         let op = '||' as opType;
         let opRet = OperatorOverLoad(scope, node[op]!.leftChild, node[op]!.rightChild, node, op);

@@ -13,7 +13,7 @@ Reflect.ownKeys({
 })
 > ['4', '18', 'star', 'kirby', Symbol(07akioni)]
 */
-type opType = '+' | '-' | '*' | '/' | '<' | '<=' | '>' | '>=' | '==' | '||' | '&&' | '[]' | '%' | '^' | '&' | '|' | '>>' | '<<';//双目运算符
+type opType = '+' | '-' | '*' | '/' | '<' | '<=' | '>' | '>=' | '==' | '==' | '||' | '&&' | '[]' | '%' | '^' | '&' | '|' | '>>' | '<<';//双目运算符
 type opType2 = '++' | '--' | '!' | '~';//单目运算符
 interface ExtensionMethod {
     extensionType: TypeUsed;//扩展的类型
@@ -24,7 +24,7 @@ interface ExtensionMethod {
 interface TypeDef {//定义的类型
     modifier?: 'valuetype' | 'sealed';
     size?: number;
-    namespace:string;//处于的命名空间
+    namespace: string;//处于的命名空间
     recursiveChecked?: boolean;//是否已经进行了值类型循环包含的检查
     recursiveFlag?: boolean;//递归检查标记
     templates?: string[];//模板列表
@@ -37,7 +37,7 @@ type VariableDescriptor = { [key: string]: VariableProperties };
 //变量属性
 interface VariableProperties {
     variable: 'var' | 'val';
-    accessModifier?:'private';//标记private的则为private,否则默认public
+    accessModifier?: 'private';//标记private的则为private,否则默认public
     type?: TypeUsed;//需要类型推导的变量可以先不设置Type
     initAST?: ASTNode;//当type为undefined的时候,initAST必须存在,否则无法确定类型
     loadedNodes?: ASTNode[];//记录load本属性的node，在确定本属性为闭包捕获属性后，把这些load节点全部换成load闭包里面的属性
@@ -56,13 +56,13 @@ interface ArrayType {
     innerType: TypeUsed;
 }
 interface FunctionType {
-    namespace:string;//函数处于的命名空间
+    namespace: string;//函数处于的命名空间
     hasFunctionScan?: boolean;//是否已经进行过函数扫描
     isNative?: boolean;//是否为native函数
     _arguments: VariableDescriptor;
     body?: Block;//函数体,根据有无body判断是函数类型声明还是定义
     retType?: TypeUsed;//返回类型，可选，如果为undefined则需要进行类型推导
-    capture: { [key: string]: TypeUsed } = {};//捕获列表
+    capture: { [key: string]: TypeUsed } = { };//捕获列表
     templates?: string[];//模板列表
     _construct_for_type?: string;//是某个类型的构造函数
 }
@@ -125,6 +125,7 @@ interface ASTNode {
     ">"?: { rightChild: ASTNode; leftChild: ASTNode; };
     ">="?: { rightChild: ASTNode; leftChild: ASTNode; };
     "=="?: { rightChild: ASTNode; leftChild: ASTNode; };
+    "!="?: { rightChild: ASTNode; leftChild: ASTNode; };
     "||"?: { rightChild: ASTNode; leftChild: ASTNode; };
     "&&"?: { rightChild: ASTNode; leftChild: ASTNode; };
     "%"?: { rightChild: ASTNode; leftChild: ASTNode; };

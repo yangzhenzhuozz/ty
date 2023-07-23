@@ -984,6 +984,29 @@ export function setParserNameSpace(name: string) {
             }
         },
         {
+            "operator_overload:operator != ( id : type ) : type { statements } ;": {
+                action: function ($, s): { [key: string]: FunctionType } {
+                    let id = $[3] as string;
+                    let op: opType | opType2 = $[1];
+                    let parameterType = $[5] as TypeUsed;
+                    let statements = $[10] as Block;
+                    let retType = $[8] as TypeUsed;
+                    let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
+                    argument[id] = { variable: 'var', type: parameterType };
+                    let fun: FunctionType = {
+                        namespace: namespaceforParser,
+                        capture: {},
+                        _arguments: argument,
+                        body: statements,
+                        retType: retType
+                    };
+                    let ret: { [key: string]: FunctionType } = JSON.parse('{}');
+                    ret[op] = fun;
+                    return ret;
+                }
+            }
+        },
+        {
             "operator_overload:operator || ( id : type ) : type { statements } ;": {
                 action: function ($, s): { [key: string]: FunctionType } {
                     let id = $[3] as string;
@@ -1444,6 +1467,28 @@ export function setParserNameSpace(name: string) {
         },
         {
             "operator_overload:operator == ( id : type ) : type { native } ;": {
+                action: function ($, s): { [key: string]: FunctionType } {
+                    let id = $[3] as string;
+                    let op: opType | opType2 = $[1];
+                    let parameterType = $[5] as TypeUsed;
+                    let retType = $[8] as TypeUsed;
+                    let argument: VariableDescriptor = JSON.parse("{}");//为了生成的解析器不报红 
+                    argument[id] = { variable: 'var', type: parameterType };
+                    let fun: FunctionType = {
+                        namespace: namespaceforParser,
+                        capture: {},
+                        _arguments: argument,
+                        isNative: true,
+                        retType: retType
+                    };
+                    let ret: { [key: string]: FunctionType } = JSON.parse('{}');
+                    ret[op] = fun;
+                    return ret;
+                }
+            }
+        },
+        {
+            "operator_overload:operator != ( id : type ) : type { native } ;": {
                 action: function ($, s): { [key: string]: FunctionType } {
                     let id = $[3] as string;
                     let op: opType | opType2 = $[1];
@@ -2293,6 +2338,13 @@ export function setParserNameSpace(name: string) {
             "object:object == object": {
                 action: function ($, s): ASTNode {
                     return { desc: "ASTNode", "==": { leftChild: $[0] as ASTNode, rightChild: $[2] as ASTNode } };
+                }
+            }
+        },
+        {
+            "object:object != object": {
+                action: function ($, s): ASTNode {
+                    return { desc: "ASTNode", "!=": { leftChild: $[0] as ASTNode, rightChild: $[2] as ASTNode } };
                 }
             }
         },

@@ -1,11 +1,32 @@
 function init(){
-    system.loadLibrary("system_console".buffer,{["system_console_NativePrintBytesString".buffer]});
+    system.loadLibrary("system_console".buffer,{[
+        "system_console_NativePrintBytesString".buffer,
+        "system_console_ReadLineFromConsole".buffer
+    ]});
 };
 
 function WriteLine(str:string){
     NativePrintBytesString(str.buffer);
 };
 
+function ReadLine():string{
+    var result=new string(new byte[0]);
+    var newLine="\n";
+    for(;;){
+        var c=ReadLineFromConsole();
+        var str=new string({[(byte)c]});
+        if(str.buffer[0]!=newLine.buffer[0]){
+            result=result+str;
+        }else{
+            break;
+        }
+    }
+    return result;
+};
+
 function NativePrintBytesString(buffer:byte[]):void{
+    native
+};
+function ReadLineFromConsole():int{
     native
 };

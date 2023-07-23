@@ -2067,6 +2067,114 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
         }
         return { startIR: left.startIR, endIR: opIR, truelist: tureList, falselist: falseList, isRightValueTypeVariable: true };
     }
+    else if (node['!='] != undefined) {
+        let left = nodeRecursion(scope, node['!='].leftChild, {
+            label: undefined,
+            frameLevel: undefined,
+            isGetAddress: undefined,
+            boolForward: undefined,
+            isAssignment: undefined,
+            singleLevelThis: option.singleLevelThis,
+            inContructorRet: undefined,
+            functionWrapName: option.functionWrapName
+        });
+        if (left.truelist.length > 0 || left.falselist.length > 0) {
+            let trueIR = new IR('const_i8_load', 1);
+            let jmp = new IR('jmp');
+            let falseIR = new IR('const_i8_load', 0);
+            jmp.operand1 = BigInt(falseIR.index - jmp.index + falseIR.length);
+            backPatch(left.truelist, trueIR.index);//回填true
+            backPatch(left.falselist, falseIR.index);//回填false
+        }
+
+        let right = nodeRecursion(scope, node['!='].rightChild, {
+            label: undefined,
+            frameLevel: undefined,
+            isGetAddress: undefined,
+            boolForward: undefined,
+            isAssignment: undefined,
+            singleLevelThis: option.singleLevelThis,
+            inContructorRet: undefined,
+            functionWrapName: option.functionWrapName
+        });
+
+        if (right.truelist.length > 0 || right.falselist.length > 0) {
+            let trueIR = new IR('const_i8_load', 1);
+            let jmp = new IR('jmp');
+            let falseIR = new IR('const_i8_load', 0);
+            jmp.operand1 = falseIR.index - jmp.index + falseIR.length
+            backPatch(right.truelist, trueIR.index);//回填true
+            backPatch(right.falselist, falseIR.index);//回填false
+        }
+
+        let opIR: IR;
+        let tureList: IR[] = [];
+        let falseList: IR[] = [];
+        if (node['!='].leftChild.type?.PlainType?.name == 'system.bool' && node['!='].rightChild.type?.PlainType?.name == 'system.bool') {
+            if (option.boolForward) {
+                opIR = new IR('i8_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i8_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        }
+        else if (node['!='].leftChild.type?.PlainType?.name == 'system.byte' && node['!='].rightChild.type?.PlainType?.name == 'system.byte') {
+            if (option.boolForward) {
+                opIR = new IR('i8_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i8_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        } else if (node['!='].leftChild.type?.PlainType?.name == 'system.short' && node['!='].rightChild.type?.PlainType?.name == 'system.short') {
+            if (option.boolForward) {
+                opIR = new IR('i16_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i16_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        } else if (node['!='].leftChild.type?.PlainType?.name == 'system.int' && node['!='].rightChild.type?.PlainType?.name == 'system.int') {
+            if (option.boolForward) {
+                opIR = new IR('i32_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i32_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        } else if (node['!='].leftChild.type?.PlainType?.name == 'system.long' && node['!='].rightChild.type?.PlainType?.name == 'system.long') {
+            if (option.boolForward) {
+                opIR = new IR('i64_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i64_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        } else if (node['!='].leftChild.type?.PlainType?.name == 'system.double' && node['!='].rightChild.type?.PlainType?.name == 'system.double') {
+            if (option.boolForward) {
+                opIR = new IR('double_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('double_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        }
+        //null判断被处理为i64
+        else if (node['!='].leftChild.type?.PlainType?.name == '@null' || node['!='].rightChild.type?.PlainType?.name == '@null') {
+            if (option.boolForward) {
+                opIR = new IR('i64_if_cmp_ne');
+                tureList.push(opIR)
+            } else {
+                opIR = new IR('i64_if_cmp_eq');
+                falseList.push(opIR)
+            }
+        }
+        else {
+            throw `vm 暂未支持${TypeUsedSign(node['!='].leftChild.type!)}的!=操作`;
+        }
+        return { startIR: left.startIR, endIR: opIR, truelist: tureList, falselist: falseList, isRightValueTypeVariable: true };
+    }
     else if (node['_while'] != undefined) {
         let startIR: IR | undefined;
         let conditionStartIR: IR;

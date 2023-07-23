@@ -61,6 +61,7 @@ class string{
 
 valuetype class bool{
      operator == ( v : bool ) : bool { native } ;
+     operator != ( v : bool ) : bool { native } ;
      operator || ( v : bool ) : bool { native } ;
      operator && ( v : bool ) : bool { native } ;
      operator ! () : bool { native } ;
@@ -85,6 +86,7 @@ valuetype class byte{
     operator > ( v : byte ) : bool { native } ;
     operator >= ( v : byte ) : bool { native } ;
     operator == ( v : byte ) : bool { native } ;
+    operator != ( v : byte ) : bool { native } ;
 }
 
 valuetype class short{
@@ -106,6 +108,7 @@ valuetype class short{
     operator > ( v : short ) : bool { native } ;
     operator >= ( v : short ) : bool { native } ;
     operator == ( v : short ) : bool { native } ;
+    operator != ( v : short ) : bool { native } ;
 }
 
 valuetype class int{
@@ -127,6 +130,7 @@ valuetype class int{
     operator > ( v : int ) : bool { native } ;
     operator >= ( v : int ) : bool { native } ;
     operator == ( v : int ) : bool { native } ;
+    operator != ( v : int ) : bool { native } ;
 }
 
 valuetype class long{
@@ -148,6 +152,7 @@ valuetype class long{
     operator > ( v : long ) : bool { native } ;
     operator >= ( v : long ) : bool { native } ;
     operator == ( v : long ) : bool { native } ;
+    operator != ( v : long ) : bool { native } ;
 }
 
 valuetype class double{
@@ -162,6 +167,7 @@ valuetype class double{
     operator > ( v : double ) : bool { native } ;
     operator >= ( v : double ) : bool { native } ;
     operator == ( v : double ) : bool { native } ;
+    operator != ( v : double ) : bool { native } ;
 }
 
 valuetype class object{}
