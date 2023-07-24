@@ -6,16 +6,12 @@ function main():void{}
 区别只在于lambda表达式不能预先定义返回值，假设main内部再调用main，会造成无法推导返回值
 */
 var main=()=>{
-    try{
-        var a=(int)(object)null;
-    }catch(e:system.exception.NullPointerException){
-        system.console.WriteLine("捕获了一个空指针异常");
-    }
     { //这里放一个block是为了测试GC的精准度,需要正确释放外部资源(比如这里的socket)
         try{    //创建Socket很有可能失败，所以需要捕获异常
             var socket=new system.net.ServerSocket("127.0.0.1",10086);
             socket.listen(0);
             var client = socket.accept();
+            system.console.WriteLine(client.address.toString());
 
             var pos=0;
             //lambda测试
@@ -49,6 +45,7 @@ var main=()=>{
             system.console.WriteLine(e);
         }
     }//退出block，立即GC
+    for(;;){}
     system.console.WriteLine("end");
 };
 
