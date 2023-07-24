@@ -12,15 +12,15 @@ lexer.addRule([`"[^"]*"`, (arg) => {
     return "immediate_string";
 }]);
 lexer.addRule(['[0-9]*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['[0-9]b', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9][0-9]*b', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
 lexer.addRule(["'.'", (arg) => { 
 arg.value = `${arg.yytext.charCodeAt(1)}b`; 
 return "immediate_val"; 
 }]);
-lexer.addRule(['[0-9]s', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['[0-9]l', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['[0-9]d', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
-lexer.addRule(['[0-9]\\.[0-9]', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9][0-9]*s', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9][0-9]*l', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9][0-9]*d', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
+lexer.addRule(['[0-9][0-9]*\\.[0-9][0-9]*', (arg) => { arg.value = arg.yytext; return "immediate_val"; }]);
 lexer.addRule(['[_a-zA-Z][_a-zA-Z0-9]*',
     (arg) => {
         //在解析模板的时候会用到
