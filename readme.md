@@ -18,3 +18,4 @@ node dist\compiler\parser-bnf.js --生成编译器的parser.ts
 tsc --把刚刚生成的编译器parser.ts编译到js
 copyfiles -u 2 src/compiler/lib/* dist/compiler --把lib目录复制到 dist/compiler目录
 ```
+script中的watch是为了把src/compiler/lib目录拷贝到dist/compiler/lib目录，实际使用的时候没什么用,在开发lib的时候有用

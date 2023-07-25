@@ -7,16 +7,16 @@
     "step4": "node dist/compiler/parser-bnf.js",
     "step5": "tsc",
     "step6": "copyfiles -u 2 src/compiler/lib/* dist/compiler",
+    "watch": "onchange -i \"src/compiler/lib/*\" -- npm run step6",
     "build": "npm run step1 & npm run step2 & npm run step3 & npm run step4 & npm run step5 & npm run step6"
-  },
-  "dependencies": {
-    "@types/node": "^18.13.0"
   },
   "version": "1.2.5",
   "bin": "dist/compiler/main.js",
   "type": "module",
   "devDependencies": {
+    "@types/node": "^18.13.0",
     "copyfiles": "^2.4.1",
+    "onchange": "^7.1.0",
     "typescript": "^5.1.6"
   }
 }

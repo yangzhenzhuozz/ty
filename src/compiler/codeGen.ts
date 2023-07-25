@@ -601,7 +601,10 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
         let varOffset = blockScope.getPropOffset(name);//def变量
         let size = blockScope.getPropSize(name);
         let startIR: IR | undefined;
-        let endIR: IR;
+        let endIR: IR | undefined;
+        if (isPointType(node['def'][name].type!)) {//任何时候遇到非值类型，先在栈空间申请一个null指针,比如 var p=gen(); 在gen函数抛出异常,将会导致p不被正确的设置为null
+            endIR = new IR('alloc_null');
+        }
         if (node['def'][name].initAST != undefined) {
             let nr = nodeRecursion(blockScope, node['def'][name].initAST!, {
                 label: undefined,
@@ -714,7 +717,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
                     }
                 }
             } else {
-                endIR = new IR('alloc_null');
+                assert(endIR != undefined);//如果是指针类型，且没有初始化代码，则一定有一条alloc_null指令
             }
         }
         return { startIR: startIR ?? endIR, endIR, truelist: [], falselist: [] };
@@ -3411,7 +3414,7 @@ export default function programScan() {
                 putfield(prop.type!, offset, nr.truelist, nr.falselist);
             } else if (prop.type?.FunctionType && (prop.type?.FunctionType.body || prop.type?.FunctionType.isNative)) {//如果是函数定义则生成函数
                 let blockScope = new BlockScope(programScope, prop.type.FunctionType, prop.type?.FunctionType.body!, { program });
-                let fun = functionObjGen(blockScope, prop.type.FunctionType, { nativeName: `${spaceName}.${variableName}`.replaceAll('.','_') });//把所有nativeFunctioin的.全部换成下划线
+                let fun = functionObjGen(blockScope, prop.type.FunctionType, { nativeName: `${spaceName}.${variableName}`.replaceAll('.', '_') });//把所有nativeFunctioin的.全部换成下划线
                 new IR('program_load');
                 let newIR = new IR('newFunc', undefined, undefined, undefined);
                 irAbsoluteAddressRelocationTable.push({ sym: fun.text, ir: newIR });
