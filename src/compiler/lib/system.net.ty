@@ -1,15 +1,36 @@
 function init(){
     system.loadLibrary("system_net".buffer,{[
-        "system_net_ip2intNative".buffer,
+        "system_net_ip2longNative".buffer,
         "system_net_createServerSocket".buffer,
         "system_net_listen".buffer,
         "system_net_accept".buffer,
         "system_net_send".buffer,
-        "system_net_read".buffer
+        "system_net_read".buffer,
+        "system_net_getSocketAddress".buffer,
+        "system_net_getSocketPort".buffer,
+        "system_net_getSocketFamily".buffer
     ]});
 };
+class IPAddress{
+    var host:long;
+    var port:short;
+    var family:short;
+    var _point:object;//原始socket
+    IPAddress(host:long,port:short,family:short){
+        this.host=host;
+        this.port=port;
+        this.family=family;
+    }
+    function toString():string{
+        return "ip:"+host.toString()+",port:"+port.toString();
+    };
+}
 class Socket{
     var socket:object;
+    var address:IPAddress;
+    Socket(address:IPAddress){
+        this.address=address;
+    }
     Socket(s:object){
         socket=s;
     }
@@ -24,16 +45,16 @@ class Socket{
     };
 }
 class ServerSocket{
-    var IPAddress:int;
+    var address:long;
     var port:int;
     var _socket:object;
     ServerSocket(host:string,port:int){
-        IPAddress=ip2int(host);
-        if(IPAddress==0){
+        address=ip2long(host);
+        if(address==0l){
             throw "无效的ip地址:"+host;
         }
         this.port=port;
-        _socket=createServerSocket(IPAddress,port);
+        _socket=createServerSocket(address,port);
         if(_socket==null){
             throw "创建socket失败";
         }
@@ -45,11 +66,21 @@ class ServerSocket{
         }
     };
     function accept():Socket{
-        var clientSocket=system.net.accept(_socket);
-        if(clientSocket==null){
+        var fd=system.net.accept(_socket);
+        if(fd==null){
             throw "accept失败";
         }
-        return new Socket(clientSocket);
+        var clientSocket = new Socket(fd);
+        /*
+        如果注释这里，则GC直接爆炸，去掉注释，则GC延迟到另外地方爆炸
+        var ipAddress=new IPAddress(
+            getSocketAddress(fd),
+            getSocketPort(fd),
+            getSocketFamily(fd)
+        );
+        clientSocket.address=ipAddress;
+        */
+        return clientSocket;
     };
 }
 
@@ -69,15 +100,27 @@ function read(_socket:object,buffer:byte[]):int{
     native
 };
 
-function createServerSocket(address:int,port:int):object{
+function createServerSocket(address:long,port:int):object{
     native
 };
 
-function ip2int(host:string):int{
-    return ip2intNative(host.buffer);
+function getSocketAddress(_socket:object):long{
+    native
+};
+
+function getSocketPort(_socket:object):short{
+    native
+};
+
+function getSocketFamily(_socket:object):short{
+    native
+};
+
+function ip2long(host:string):long{
+    return ip2longNative(host.buffer);
 };
 
 //实在懒得写解析ip的代码了，用c++的算了
-function ip2intNative(buffer:byte[]):int{
+function ip2longNative(buffer:byte[]):long{
     native
 };

@@ -1,15 +1,12 @@
 function parse(str:string):int{
-    var template="09";
-    var startChar=(int)template[0];
-    var endChar=(int)template[1];
     var ret=0;
     var pos=1;
     for(var i=str.buffer.length-1 ; i>=0 ; i--){
-        var ch=(int)str[i];
-        if(ch<startChar||ch>endChar){
+        var ch=str[i];
+        if(ch<'0'||ch>'9'){
             throw "无效字符"+new string( {[ str[i] ]} );
         }else{
-            ret=ret + (ch-(int)template[0]) * pos;
+            ret=ret + (int)(ch-'0') * pos;
         }
         pos=pos*10;
     }
