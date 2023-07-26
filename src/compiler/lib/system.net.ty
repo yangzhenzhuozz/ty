@@ -71,15 +71,12 @@ class ServerSocket{
             throw "accept失败";
         }
         var clientSocket = new Socket(fd);
-        /*
-        如果注释这里，则GC直接爆炸，去掉注释，则GC延迟到另外地方爆炸
         var ipAddress=new IPAddress(
             getSocketAddress(fd),
             getSocketPort(fd),
             getSocketFamily(fd)
         );
         clientSocket.address=ipAddress;
-        */
         return clientSocket;
     };
 }
