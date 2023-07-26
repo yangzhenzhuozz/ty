@@ -265,7 +265,7 @@ export enum OPCODE {
     p_pop,//从计算栈中弹出指针
     __exit,//退出
     alloc,//申请局部变量空间(只有初始化值类型的局部变量时用到,frame自动增长size,在这条指令之后一定有p_pop，表示这个值类型已经init完毕，可以进行GC)
-    alloc_null,//生成null局部变量(frame自动增长8,一个指针的长度)
+    alloc_pointer,//frame自动增长8,一个指针的长度
     access_array_length,//读取数组的length
     native_call,//调用native函数
 };
