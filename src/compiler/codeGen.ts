@@ -602,9 +602,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
         let size = blockScope.getPropSize(name);
         let startIR: IR | undefined;
         let endIR: IR | undefined;
-        if (isPointType(node['def'][name].type!)) {//任何时候遇到非值类型，先在栈空间申请一个null指针,比如 var p=gen(); 在gen函数抛出异常,将会导致p不被正确的设置为null
-            endIR = new IR('alloc_null');
-        }
+        
         if (node['def'][name].initAST != undefined) {
             let nr = nodeRecursion(blockScope, node['def'][name].initAST!, {
                 label: undefined,
@@ -717,7 +715,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
                     }
                 }
             } else {
-                assert(endIR != undefined);//如果是指针类型，且没有初始化代码，则一定有一条alloc_null指令
+                endIR = new IR('alloc_null');
             }
         }
         return { startIR: startIR ?? endIR, endIR, truelist: [], falselist: [] };
