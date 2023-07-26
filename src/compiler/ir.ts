@@ -60,7 +60,7 @@ export enum OPCODE {
     newArray,//op1 数组类型，op2 维度层级(从计算栈中取)
     program_load,//将program指针压入表达式栈
     program_store,//将program从栈存入program指针
-    push_stack_map,//压入栈帧布局
+    push_stack_map,//压入栈帧布局，同时给这片局部变量空间置0
     pop_stack_map,//弹出栈帧布局
     p_getfield,//从计算栈顶弹出一个指针，以指针作为obj基础地址，读取一个指针成员到计算栈顶
     p_putfield,//从计算栈顶弹出一个指针，接着再弹出一个指针，以指针作为obj的基础地址，把指针写入成员区域
@@ -265,7 +265,7 @@ export enum OPCODE {
     p_pop,//从计算栈中弹出指针
     __exit,//退出
     alloc,//申请局部变量空间(只有初始化值类型的局部变量时用到,frame自动增长size,在这条指令之后一定有p_pop，表示这个值类型已经init完毕，可以进行GC)
-    alloc_null,//生成null局部变量(置0,frame自动增长8)
+    alloc_null,//生成null局部变量(frame自动增长8,一个指针的长度)
     access_array_length,//读取数组的length
     native_call,//调用native函数
 };
