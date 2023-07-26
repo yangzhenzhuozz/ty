@@ -715,7 +715,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
                     }
                 }
             } else {
-                endIR = new IR('alloc_null');
+                endIR = new IR('alloc_pointer');
             }
         }
         return { startIR: startIR ?? endIR, endIR, truelist: [], falselist: [] };
