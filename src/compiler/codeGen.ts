@@ -61,7 +61,7 @@ export function isPointType(type: TypeUsed): boolean {
 function nodeRecursion(scope: Scope, node: ASTNode, option: {
     label: undefined | { name: string, frameLevel: number, breakIRs: IR[], continueIRs: IR[] }[],//for while的label,jmpIRs:break或者continue的列表，需要向下传递
     frameLevel: undefined | number,//给ret、break、continue提供popup_stackFrame参数，需要向下传递,并且遇到新block的时候要+1
-    isGetAddress: undefined | boolean,//是否读取地址,比如 int a; a.toString(); 这里的load a就是读取a的地址而不是值，只有accessField和callEXM的子节点取true，影响accessField和load节点
+    isGetAddress: undefined | boolean,//是否读取地址,比如 class test{ valueType v},如果需要访问值类型v，则需要获取地址，只有accessField的子节点取true，影响accessField和load节点
     /**
      * 因为机器码的if指令如果命中则跳转，不命中则执行下一条指令，所以要想实现分支就要利用这个特性,
      * bool反向的时候，jmp目标是falseIR，所以下一条应该是trueIR，不反向的时候，目标是trueIR，所以下一条指令是falseIR
@@ -1489,7 +1489,7 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
         let nrRet = nodeRecursion(scope, node['callEXM'].obj, {
             label: undefined,
             frameLevel: undefined,
-            isGetAddress: true,
+            isGetAddress: false,
             boolForward: undefined,
             isAssignment: undefined,
             singleLevelThis: option.singleLevelThis,
@@ -1500,10 +1500,11 @@ function nodeRecursion(scope: Scope, node: ASTNode, option: {
          * 见accessField节点对装箱的解释
          */
         //访问一个值类型右值的扩展函数时
+        /*
         if (!isPointType(node['callEXM'].obj.type!) && nrRet.isRightValueTypeVariable) {
             let box = new IR('box');
             typeRelocationTable.push({ t1: node['callEXM'].obj.type!.PlainType!.name, ir: box });
-        }
+        }*/
 
         let endIR = new IR('abs_call');
         irAbsoluteAddressRelocationTable.push({ sym: `${node['callEXM'].extendFuntionRealname}`, ir: endIR });
@@ -3110,8 +3111,15 @@ function extensionMethodWrapFunctionGen(blockScope: BlockScope, fun: FunctionTyp
      * 扩展函数体只有两个节点，第一个是定义捕获闭包类，第二个是ret一个函数
      * 这个捕获闭包类只有一个成员，就是扩展的this,所以强制cast，使得这个闭包类和原来对象重叠即可
      * 所以如果是值类型，是不需要初始化这个闭包了，否则这个闭包持有的对象就是新的值了
+     * 通过忽略第一个节点，伪装成已经把值类型变量捕获了(这种方式可以让这个扩展函数操作变量时,实际操作的是原来的变量,但是会带来GC无法识别的问题)
+     * 因为GC问题，不伪装了
+     * 
+     * 下面是伪装代码：
+     * 同时还要配合callEXM节点的伪装代码进行，把isGetAddress改为true，同时对右值的值类型装箱
+     * 现在直接放弃，估计C#也是有类似的考虑，本来想秒了C#的，因为GC问题，秒不了了
      */
     //值类型的话，第一个AST直接忽略
+    /*
     if (program.getDefinedType(extendTypeName)?.modifier == 'valuetype') {
         new IR('init_p_store', 0);
 
@@ -3155,6 +3163,31 @@ function extensionMethodWrapFunctionGen(blockScope: BlockScope, fun: FunctionTyp
         let retIR = new IR('ret');
         nrRet2.jmpToFunctionEnd![0].operand1 = retIR.index - nrRet2.jmpToFunctionEnd![0].index;// 有且仅有一个ret语句
     }
+    */
+
+    nodeRecursion(blockScope, (fun.body!.body[0] as ASTNode), {
+        label: undefined,
+        frameLevel: 1,
+        isGetAddress: undefined,
+        boolForward: undefined,
+        isAssignment: undefined,
+        singleLevelThis: true,
+        inContructorRet: false,
+        functionWrapName: '@unknow'
+    });
+    let nrRet2 = nodeRecursion(blockScope, (fun.body!.body[1] as ASTNode), {
+        label: undefined,
+        frameLevel: 1,
+        isGetAddress: undefined,
+        boolForward: undefined,
+        isAssignment: undefined,
+        singleLevelThis: true,
+        inContructorRet: false,
+        functionWrapName: '@unknow'
+    });
+    let retIR = new IR('ret');
+    nrRet2.jmpToFunctionEnd![0].operand1 = retIR.index - nrRet2.jmpToFunctionEnd![0].index;// 有且仅有一个ret语句
+
     //都不加stackFrame_popup了,因为第二个AST就是ret语句，已经有了
     let stackFrame: { name: string, type: TypeUsed }[] = [];
     stackFrame.push({ name: '@this_or_funOjb', type: { PlainType: { name: 'system.object' } } });
