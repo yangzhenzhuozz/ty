@@ -10,7 +10,7 @@ var main=()=>{
         var socket=new system.net.ServerSocket("127.0.0.1",10086);
         socket.listen(0);
         var client = socket.accept();
-        client.address.toString();
+        system.console.WriteLine(client.address.toString());
     }
 };
 
