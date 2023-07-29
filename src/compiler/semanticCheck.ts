@@ -834,8 +834,9 @@ function nodeRecursion(scope: Scope, node: ASTNode, label: string[], declareRetT
 
                     tmpFunObj.type!.FunctionType!.templates = undefined;//已经特化了，移除模板定义
                     FunctionSpecialize(tmpFunObj.type!.FunctionType!, map);
-                    program.setProp(realObjName, getScopeSpaceName(), tmpFunObj);
-                    programScope.setPropForTemplateSpecialize(realObjName, getScopeSpaceName());
+                    let nameWithOutName=realObjName.slice(tmpFunObj.type!.FunctionType!.namespace.length + 1);//移除命名空间前缀的名字
+                    program.setProp(nameWithOutName, tmpFunObj.type!.FunctionType!.namespace, tmpFunObj);//注册的时候移除命名空间前缀
+                    programScope.setPropForTemplateSpecialize(realObjName, tmpFunObj);
                     //把函数对象注入到program中
                     let blockScope = new BlockScope(programScope, tmpFunObj.type!.FunctionType, tmpFunObj.type!.FunctionType!.body!, {});
                     functionScan(blockScope, tmpFunObj.type!.FunctionType!);
@@ -1192,6 +1193,9 @@ function functionScan(blockScope: BlockScope, fun: FunctionType): TypeUsed {
     return fun.retType!;
 }
 function ClassScan(classScope: ClassScope) {
+    let lastNameSpace = getScopeSpaceName();
+    let nowNameSpace=classScope.className.split('.')[0];
+    setScopeSpaceName(nowNameSpace);//设置命名空间
     for (let propName of classScope.getPropNames()) {//扫描所有成员
         let prop = classScope.getProp(propName).prop;
         if (prop.initAST != undefined) {
@@ -1223,6 +1227,7 @@ function ClassScan(classScope: ClassScope) {
             throw `void无法计算大小,任何成员都不能是void类型`;
         }
         registerType(prop.type!);//经过推导，类型已经确定了
+        setScopeSpaceName(lastNameSpace);//还原命名空间
     }
     //扫描构造函数
     for (let constructorName in program.getDefinedType(classScope.className)._constructor) {
@@ -1309,7 +1314,7 @@ function TempalteCheck(type: { PlainType: PlainType }) {
                 let templateClass = JSON.parse(JSON.stringify(programScope.program.tempalteType[type.PlainType!.name])) as TypeDef;
                 ClassSpecialize(templateClass, map);
                 programScope.program.setDefinedType(className, templateClass);//深拷贝，避免污染原来的模板类
-                programScope.registerClass(className);
+                programScope.registerClassUnInference(className);
                 ClassScan(programScope.getClassScope(className));
             }
 

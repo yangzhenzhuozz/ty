@@ -73,12 +73,21 @@ class ProgramScope extends Scope {
         }
     }
     /**
-     * 注册因为闭包捕获而新增的类型
+     * 注册新增的类型(比如闭包类),要求这个class内部所有类型都已经推导完毕
      * @param name 
      */
     public registerClass(name: string) {
         this.classMap[name] = new ClassScope(this.program.getDefinedType(name).property, name, this, { program: this.program });
     }
+
+    /**
+     * 注册新增的类型,可以是还没有进行类型推导的class
+     * @param name 
+     */
+    public registerClassUnInference(name: string) {
+        this.classMap[name] = new ClassScope(this.program.getDefinedType(name).property, name, this, {});
+    }
+
     public getClassScope(className: string): ClassScope {
         if (this.classMap[className] != undefined) {
             return this.classMap[className];
@@ -123,8 +132,8 @@ class ProgramScope extends Scope {
      * 反正现在各个阶段就是混乱，已经无法维护了
      * @param name 
      */
-    public setPropForTemplateSpecialize(name: string, space: string) {
-        this.property[name] = this.program.getProgramProp(name, space);
+    public setPropForTemplateSpecialize(name: string, obj: VariableProperties) {
+        this.property[name] = obj;
     }
 }
 class ClassScope extends Scope {

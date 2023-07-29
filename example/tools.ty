@@ -1,3 +1,14 @@
+var a=123;
+class test<T>
+{
+    var v:T=a;
+    test(){}
+}
+class test2
+{
+    var v:int=a;
+    test2(){}
+}
 //扩展函数测试
 extension function toString(this int value):string{
     var tmp=value;
