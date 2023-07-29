@@ -8,9 +8,15 @@ function init(){
     mainThread.name="main";
     setCurrentThread(mainThread);
 };
-
+function LoadLibrary(fileName:string,functionNames:string[]):void{
+    var fns=new byte[functionNames.length][];
+    for(var i=0;i<functionNames.length;i++){
+        fns[i]=functionNames[i].buffer;
+    }
+    VMLoadNativeLib(fileName.buffer,fns);
+};
 /*VM内置函数,用于加载dll文件*/
-function loadLibrary(fileName:byte[],functionNames:byte[][]):void{
+function VMLoadNativeLib(fileName:byte[],functionNames:byte[][]):void{
     native
 };
 
@@ -33,6 +39,14 @@ function getCurrentThread():system.dispatcher.thread{
 function setCurrentThread(thread:system.dispatcher.thread):void{
     native
 };
+
+
+
+
+
+
+
+
 
 //下面几种类型是魔法类,里面的的操作符重载、构造函数等都是由编译器特殊处理
 /*

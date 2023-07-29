@@ -1,14 +1,16 @@
 function init(){
-    system.loadLibrary("system_net".buffer,{[
-        "system_net_ip2longNative".buffer,
-        "system_net_createServerSocket".buffer,
-        "system_net_listen".buffer,
-        "system_net_accept".buffer,
-        "system_net_send".buffer,
-        "system_net_read".buffer,
-        "system_net_getSocketAddress".buffer,
-        "system_net_getSocketPort".buffer,
-        "system_net_getSocketFamily".buffer
+    system.LoadLibrary("system_net",{[
+        "system_net_ip2longNative",
+        "system_net_createServerSocket",
+        "system_net_listen",
+        "system_net_accept",
+        "system_net_send",
+        "system_net_read",
+        "system_net_getSocketAddress",
+        "system_net_getSocketPort",
+        "system_net_getSocketFamily",
+        "system_net_createSocket",
+        "system_net_connect"
     ]});
 };
 class IPAddress{
@@ -21,8 +23,19 @@ class IPAddress{
         this.port=port;
         this.family=family;
     }
+    IPAddress(host:string,port:short,family:short){
+        this.host=ip2long(host);
+        this.port=port;
+        this.family=family;
+    }
+
     function toString():string{
-        return "ip:"+host.toString()+",port:"+port.toString();
+        var a=host&255l;
+        var b=(host>>8)&255l;
+        var c=(host>>16)&255l;
+        var d=(host>>24)&255l;
+        var ip=a.toString()+"."+b.toString()+"."+c.toString()+"."+d.toString();
+        return "ip:"+ip+",port:"+port.toString();
     };
 }
 class Socket{
@@ -30,10 +43,20 @@ class Socket{
     var address:IPAddress;
     Socket(address:IPAddress){
         this.address=address;
+        this.socket = createSocket();
+        if(socket==null){
+            throw "创建Socket失败";
+        }
     }
     Socket(s:object){
         socket=s;
     }
+    function connect(){
+        var code = system.net.connect(socket,address.host,address.port,address.family);
+        if(code!=0){
+            throw "connect失败";
+        }
+    };
     function sendString(msg:string):int{
         return send(msg.buffer);
     };
@@ -45,18 +68,15 @@ class Socket{
     };
 }
 class ServerSocket{
-    var address:long;
-    var port:int;
+    var host:long;
+    var port:short;
     var _socket:object;
-    ServerSocket(host:string,port:int){
-        address=ip2long(host);
-        if(address==0l){
-            throw "无效的ip地址:"+host;
-        }
+    ServerSocket(host:string,port:short){
+        this.host=ip2long(host);
         this.port=port;
-        _socket=createServerSocket(address,port);
+        _socket=createServerSocket(this.host,port);
         if(_socket==null){
-            throw "创建socket失败";
+            throw "创建ServerSocket失败";
         }
     }
     function listen(len:int){
@@ -97,7 +117,15 @@ function read(_socket:object,buffer:byte[]):int{
     native
 };
 
-function createServerSocket(address:long,port:int):object{
+function createServerSocket(host:long,port:short):object{
+    native
+};
+
+function createSocket():object{
+    native
+};
+
+function connect(socket:object,host:long,port:short,family:short):int{
     native
 };
 
@@ -114,7 +142,11 @@ function getSocketFamily(_socket:object):short{
 };
 
 function ip2long(host:string):long{
-    return ip2longNative(host.buffer);
+    var ret=ip2longNative(host.buffer);
+    if(ret==0l){
+        throw "无效的ip地址:"+host;
+    }
+    return ret;
 };
 
 //实在懒得写解析ip的代码了，用c++的算了

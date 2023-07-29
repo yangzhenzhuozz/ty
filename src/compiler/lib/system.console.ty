@@ -1,7 +1,7 @@
 function init(){
-    system.loadLibrary("system_console".buffer,{[
-        "system_console_NativePrintBytesString".buffer,
-        "system_console_ReadLineFromConsole".buffer
+    system.LoadLibrary("system_console",{[
+        "system_console_NativePrintBytesString",
+        "system_console_ReadLineFromConsole"
     ]});
 };
 

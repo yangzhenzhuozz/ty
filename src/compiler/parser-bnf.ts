@@ -2517,13 +2517,29 @@ export function setParserNameSpace(name: string) {
                         .replaceAll('\\"', '"');
                     let buffer = (new TextEncoder()).encode(str);
                     for (let i = 0; i < buffer.length; i++) {
-                        ASTNodes.push({ desc: "ASTNode", immediate: { primiviteValue: buffer[i] + 'b' } });//变成单个byte类型
+                        ASTNodes.push({
+                            desc: "ASTNode",
+                            immediate: { primiviteValue: buffer[i] + 'b' }
+                        });//变成单个byte类型
                     }
                     let newString: ASTNode = {
                         desc: 'ASTNode',
                         _new: {
                             type: { PlainType: { name: 'system.string' } },
-                            _arguments: [{ desc: "ASTNode", immediateArray: ASTNodes }]
+                            _arguments: [{
+                                desc: "ASTNode",
+                                //指定type,这样即使零长数组也能推导
+                                type: {
+                                    ArrayType: {
+                                        innerType: {
+                                            PlainType: {
+                                                name: "system.byte"
+                                            }
+                                        }
+                                    }
+                                },
+                                immediateArray: ASTNodes
+                            }]
                         }
                     };
                     return newString;

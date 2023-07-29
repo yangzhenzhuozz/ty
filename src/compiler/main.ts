@@ -75,7 +75,10 @@ function main(inputFiles: string[]) {
             }
             if (classNamesInThisFile.length > 0) {
                 //在本文件内部替换
-                let classRepalceReg = new RegExp(`(?<![a-zA-Z_\.])(${classNamesInThisFile.map(v => `(${v})`).reduce((p, c) => `${p}|${c}`)})(?![a-zA-Z_0-9])`, 'g');//替换类型,如果有一个类型是myClass，则所有的myClass都替换成namespace.myClass
+                //替换的时候要忽略字符串内部，不能把"Socket"替换成"system.net.Socket"
+                // console.error(`替换的时候要忽略字符串内部，比如不能把"Socket"替换成"system.net.Socket"`);
+                //用正则好像有点困难，得自己实现这个替换
+                let classRepalceReg = new RegExp(`(?<![a-zA-Z_])(${classNamesInThisFile.map(v => `(${v})`).reduce((p, c) => `${p}|${c}`)})(?![a-zA-Z_0-9])`, 'g');//替换类型,如果有一个类型是myClass，则所有的myClass都替换成namespace.myClass
                 sourceItem.source = sourceItem.source.replace(classRepalceReg, `${sourceItem.namespace}.$1`);
             }
             sourceItem.source = sourceItem.source.replace(/toString/g, '_toString');//把所有的toString统统换成_toString，避免js自带原型链已经有这些内容

@@ -1,3 +1,10 @@
 var main=()=>{
-   new tools.test<int>();
+   try{
+      var socket=new system.net.Socket(new system.net.IPAddress("127.0.0.1",5555s,2s));
+      socket.connect();
+      system.console.WriteLine("连接"+socket.address.toString()+"成功");
+      socket.sendString("hello world");
+   }catch(e:string){
+      system.console.WriteLine(e);
+   }
 };

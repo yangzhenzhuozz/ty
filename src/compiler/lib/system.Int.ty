@@ -1,7 +1,11 @@
 function parse(str:string):int{
     var ret=0;
     var pos=1;
-    for(var i=str.buffer.length-1 ; i>=0 ; i--){
+    var signed=1;
+    if(str[0]=='-'){
+        signed=-1;
+    }
+    for(var i=str.buffer.length-1 ; i>=(signed==1?0:1) ; i--){
         var ch=str[i];
         if(ch<'0'||ch>'9'){
             throw "无效字符"+new string( {[ str[i] ]} );
@@ -10,5 +14,5 @@ function parse(str:string):int{
         }
         pos=pos*10;
     }
-    return ret;
+    return ret*signed;
 };

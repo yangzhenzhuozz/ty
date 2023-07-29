@@ -1415,8 +1415,8 @@ function extensionMethodReplace(exm: ExtensionMethod) {
 
 function necessaryClassCheck() {
     let hasVMLoadNativeLib = false;
-    if (program.getProgramProp('system.loadLibrary').type?.FunctionType != undefined) {
-        let VMLoadNativeLibFun = program.getProgramProp('system.loadLibrary').type?.FunctionType!;
+    if (program.getProgramProp('system.VMLoadNativeLib')?.type?.FunctionType != undefined) {
+        let VMLoadNativeLibFun = program.getProgramProp('system.VMLoadNativeLib').type?.FunctionType!;
         let argNames = Object.keys(VMLoadNativeLibFun._arguments);
         if (argNames.length == 2) {
             let arg0Sign = TypeUsedSign(VMLoadNativeLibFun._arguments[argNames[0]].type!);
@@ -1428,7 +1428,7 @@ function necessaryClassCheck() {
         }
     }
     if (!hasVMLoadNativeLib) {
-        throw `VM运行必须定义一个名为system.loadLibrary的native函数,类型如下  参数1:byte[],参数2:byte[][] 返回值类型:void`;
+        throw `VM运行必须定义一个名为system.VMLoadNativeLib的native函数,类型如下  参数1:byte[],参数2:byte[][] 返回值类型:void`;
     }
 
     if (program.getDefinedType('system.exception.NullPointerException') == undefined) {

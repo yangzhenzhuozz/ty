@@ -1,8 +1,8 @@
 function init(){
-    system.loadLibrary("system_dispatcher".buffer,{[
-        "system_dispatcher_generateMutex".buffer,
-        "system_dispatcher_mutexLock".buffer,
-        "system_dispatcher_mutexUnlock".buffer
+    system.LoadLibrary("system_dispatcher",{[
+        "system_dispatcher_generateMutex",
+        "system_dispatcher_mutexLock",
+        "system_dispatcher_mutexUnlock"
     ]});
 };
 
