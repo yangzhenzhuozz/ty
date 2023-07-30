@@ -4,6 +4,8 @@ var main=()=>{
          autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){
             server.listen(0);
             autounwinding(var client=server.accept()){
+               client.sendString("HTTP/1.1 200 OK\r\n");
+               client.sendString("Content-Type:text/html; charset=UTF-8\r\n\r\n");
                client.sendString("hello world");
             }
          }

@@ -88,7 +88,6 @@ class ServerSocket{
     }
     function listen(len:int):void{
         var ret=system.net.listen(_socket,len);
-        system.console.WriteLine("listen ret:"+ret.toString());
         if(ret!=0){
             throw "listen失败";
         }
