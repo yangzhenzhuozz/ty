@@ -2,6 +2,9 @@ import { FiniteAutomaton, State } from "./automaton.js";
 import { Edge } from "./edge.js";
 import { LexerForREG } from "./lexerForREG.js";
 import Parse, { YYTOKEN } from "./parser.js";
+interface LEX_TOKEN extends YYTOKEN {
+    index: number;
+}
 export default class Lexer {
     private rule: ([string, ((arg: YYTOKEN) => any)] | [string, ((arg: YYTOKEN) => any), boolean])[];//第一个参数是正则，第二个是回调,第三个是是否最短匹配
     private nfa: FiniteAutomaton;
@@ -85,13 +88,14 @@ export default class Lexer {
         console.error(msg);
         console.error(output);
     }
-    public yylex(): YYTOKEN {
+    public yylex(): LEX_TOKEN {
         if (this.nfa == undefined) {
             throw `has not compiled`;
         }
         for (; ;) {
+            let ret: LEX_TOKEN;
             if (this.idx >= this.source.length) {
-                let ret: YYTOKEN = { type: '', yytext: '', value: '' };
+                ret = { type: '', yytext: '', value: '', index: this.idx };
                 let type = this.endOfFile(ret);
                 ret.type = type;
                 return ret;
@@ -106,7 +110,7 @@ export default class Lexer {
             this.lastWord = word;
 
             this.idx += word.length;
-            let ret: YYTOKEN = { type: '', yytext: word, value: '' };
+            ret = { type: '', yytext: word, value: '', index: this.idx };
             let type = nfaTestRet.rule(ret);
             if (type == undefined) {
                 continue;

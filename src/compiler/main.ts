@@ -9,6 +9,25 @@ import { Program } from "./program.js";
 import { userTypeDictionary } from "./lexrule.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from 'node:url';
+
+/**
+ * 正则本身的表达能力有限不够,只能自己来了
+ * 用于源码替换，即把 class myClass{};new myClass(); 替换成 class namespace.myClass{};new namepsace.myClass();
+ * @param src 
+ * @param replaceItems 需要保证各个区间没有交集,且必须是有序的
+ */
+function myReplace(src: string, replaceItems: { src: string, dest: string, index: number }[]): string {
+    let ret: string[] = [];
+    let index = 0;
+    for (let item of replaceItems) {
+        ret.push(src.slice(index, item.index - item.src.length));
+        ret.push(item.dest);
+        index = item.index;
+    }
+    ret.push(src.slice(index, src.length + 1));
+    return ret.filter((v) => !!v).reduce((previous, current) => `${previous}${current}`);
+}
+
 /**
  * 1.把nameSpace.xxx先注册成id
  * 2.识别出所有class id中的id(剔除字符串、注释)
@@ -28,7 +47,7 @@ function main(inputFiles: string[]) {
             if (!fileNamesSet.has(path.basename(input, '.ty'))) {
                 fileNamesSet.add(path.basename(input, '.ty'));
             } else {
-                throw `文件名${path.basename(input, '.ty')}重复`
+                throw `命名空间:${path.basename(input, '.ty')}重复`
             }
             sources.push({ namespace: path.basename(input, '.ty'), source: fs.readFileSync(input, 'utf-8').toString() });
         }
@@ -58,7 +77,7 @@ function main(inputFiles: string[]) {
                     break;
                 }
                 if (lastToken?.type == 'class' && nowToken.type == 'id') {
-                    classNamesInThisFile.push(nowToken.value);
+                    classNamesInThisFile.push(nowToken.value as string);
                 }
                 lastToken = nowToken;
             }
@@ -73,15 +92,44 @@ function main(inputFiles: string[]) {
                 className.push(`${sourceItem.namespace}.${classNamesInThisFileItem}`);
                 userTypeDictionary.set(`${sourceItem.namespace}.${classNamesInThisFileItem}`, `${sourceItem.namespace}.${classNamesInThisFileItem}`);//给词法分析添加class名字
             }
-            if (classNamesInThisFile.length > 0) {
-                //在本文件内部替换
-                //替换的时候要忽略字符串内部，不能把"Socket"替换成"system.net.Socket"
-                // console.error(`替换的时候要忽略字符串内部，比如不能把"Socket"替换成"system.net.Socket"`);
-                //用正则好像有点困难，得自己实现这个替换
-                let classRepalceReg = new RegExp(`(?<![a-zA-Z_])(${classNamesInThisFile.map(v => `(${v})`).reduce((p, c) => `${p}|${c}`)})(?![a-zA-Z_0-9])`, 'g');//替换类型,如果有一个类型是myClass，则所有的myClass都替换成namespace.myClass
-                sourceItem.source = sourceItem.source.replace(classRepalceReg, `${sourceItem.namespace}.$1`);
+
+
+            /**
+             * 找出所有的id，且这个id的前面一个token不是. 比如socket会被识别出来,但是xxx.socket中的socket不会被处理，因为后面这个socket不是在这个命名空间中单独使用的
+             * 同时把toString替换成_toString
+             */
+            let replaceItems: {
+                src: string,
+                dest: string,
+                index: number
+            }[] = [];
+            lexer.setSource(sourceItem.source);
+            for (; ;) {
+                let nowToken = lexer.yylex();
+                if (nowToken.type == '$') {
+                    break;
+                }
+                //强制替换toString为_toString，因为js中的所有对象都有toString属性，会误判
+                if ((nowToken.value as string) == 'toString') {
+                    replaceItems.push({
+                        src: nowToken.value as string,
+                        dest: `_toString`,
+                        index: nowToken.index
+                    });
+                }
+                //前一个字符不是.
+                if (lastToken?.type != '.' && nowToken.type == 'id' && classNamesInThisFile.indexOf(nowToken.value as string) != -1) {
+                    classNamesInThisFile.push(nowToken.value as string);
+                    replaceItems.push({
+                        src: nowToken.value as string,
+                        dest: `${sourceItem.namespace}.${nowToken.value as string}`,
+                        index: nowToken.index
+                    });
+                }
+                lastToken = nowToken;
             }
-            sourceItem.source = sourceItem.source.replace(/toString/g, '_toString');//把所有的toString统统换成_toString，避免js自带原型链已经有这些内容
+            console.log(`替换源码:${sourceItem.namespace}`)
+            sourceItem.source = myReplace(sourceItem.source, replaceItems);
         }
 
         //给词法分析添加class名字
