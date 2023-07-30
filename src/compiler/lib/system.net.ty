@@ -10,7 +10,8 @@ function init(){
         "system_net_getSocketPort",
         "system_net_getSocketFamily",
         "system_net_createSocket",
-        "system_net_connect"
+        "system_net_connect",
+        "system_net_close"
     ]});
 };
 class IPAddress{
@@ -66,6 +67,12 @@ class Socket{
     function read(buf:byte[]):int{
         return system.net.read(socket,buf);
     };
+    function close(){
+        system.net.close(socket);
+    };
+    function unwinded(){
+        close();
+    };
 }
 class ServerSocket{
     var host:long;
@@ -99,7 +106,17 @@ class ServerSocket{
         clientSocket.address=ipAddress;
         return clientSocket;
     };
+    function close(){
+        system.net.close(_socket);
+    };
+    function unwinded(){
+        close();
+    };
 }
+
+function close(_socket:object):object{
+    native
+};
 
 function accept(_socket:object):object{
     native
