@@ -86,9 +86,10 @@ class ServerSocket{
             throw "创建ServerSocket失败";
         }
     }
-    function listen(len:int){
+    function listen(len:int):void{
         var ret=system.net.listen(_socket,len);
-        if(ret<0){
+        system.console.WriteLine("listen ret:"+ret.toString());
+        if(ret!=0){
             throw "listen失败";
         }
     };
@@ -160,7 +161,7 @@ function getSocketFamily(_socket:object):short{
 
 function ip2long(host:string):long{
     var ret=ip2longNative(host.buffer);
-    if(ret==0l){
+    if(ret==-1l){
         throw "无效的ip地址:"+host;
     }
     return ret;

@@ -1,11 +1,14 @@
 var main=()=>{
-   try{
-      autounwinding(var socket=new system.net.Socket(new system.net.IPAddress("127.0.0.1",5555s,2s))){
-         socket.connect();
-         system.console.WriteLine("连接"+socket.address.toString()+"成功");
-         socket.sendString("hello world");
+   for(;;){
+      try{
+         autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){
+            server.listen(0);
+            autounwinding(var client=server.accept()){
+               client.sendString("hello world");
+            }
+         }
+      }catch(e:string){
+         system.console.WriteLine("捕获到异常:"+e);
       }
-   }catch(e:string){
-      system.console.WriteLine(e);
    }
 };
