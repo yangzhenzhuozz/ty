@@ -59,13 +59,21 @@ class Socket{
         }
     };
     function sendString(msg:string):int{
-        return send(msg.buffer);
+        var ret = send(msg.buffer);
+        if(ret==-1){
+            throw "send error";
+        }
+        return ret;
     };
     function send(buf:byte[]):int{
         return system.net.send(socket,buf);
     };
     function read(buf:byte[]):int{
-        return system.net.read(socket,buf);
+        var ret = system.net.read(socket,buf);
+        if(ret==-1){
+            throw "read error";
+        }
+        return ret;
     };
     function close(){
         system.net.close(socket);

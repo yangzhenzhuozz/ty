@@ -4,6 +4,9 @@ var main=()=>{
          autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){
             server.listen(0);
             autounwinding(var client=server.accept()){
+               system.console.WriteLine("收到来自"+client.address.toString()+"的连接");
+               var buf = new byte[1024];
+               client.read(buf);
                client.sendString("HTTP/1.1 200 OK\r\n");
                client.sendString("Content-Type:text/html; charset=UTF-8\r\n\r\n");
                client.sendString("hello world");
