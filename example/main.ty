@@ -1,3 +1,10 @@
+/*
+1.多行注释测试
+
+2.模板函数测试
+模板函数在编写的时候只做语法检查，不做语义检查
+只有在模板特化的时候才进行完整的编译动作，如: <T> val; val.add() 在没有特化时拿不到val的类型，无法判断val是否有add成员
+*/
 function append<T>(src:T[],data:T[],offset:int,len:int):T[]{
    if(len>data.length){
       throw "len>data.length";
@@ -12,7 +19,15 @@ function append<T>(src:T[],data:T[],offset:int,len:int):T[]{
    }
    return ret;
 };
+
+//单行注释测试, var main=()=>{}; 等价于 function main(){}
 var main=()=>{
+   //这是一个扩展函数测试，扩展了int.toString
+   //操作符重载测试,重载了string的 operate + 操作符
+   /*
+   两个string相加
+   */
+   system.console.WriteLine("string of integer value 1 is" + 1.toString());
    for(;;){
       try{
          autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){
