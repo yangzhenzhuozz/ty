@@ -24,10 +24,7 @@ function append<T>(src:T[],data:T[],offset:int,len:int):T[]{
 var main=()=>{
    //这是一个扩展函数测试，扩展了int.toString
    //操作符重载测试,重载了string的 operate + 操作符
-   /*
-   两个string相加
-   */
-   system.console.WriteLine("string of integer value 1 is" + 1.toString());
+   system.console.WriteLine("string of integer value 1 is : " + 1.toString()); //两个string进行 operate + 操作
    for(;;){
       try{
          autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){

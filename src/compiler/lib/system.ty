@@ -30,12 +30,12 @@ function yield():void{
     native
 };
 
-/*VM内置函数，设置当前线程*/
+/*VM内置函数，获取当前线程*/
 function getCurrentThread():system.dispatcher.thread{
     native
 };
 
-/*VM内置函数，获取当前线程*/
+/*VM内置函数，设置当前线程*/
 function setCurrentThread(thread:system.dispatcher.thread):void{
     native
 };
