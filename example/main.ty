@@ -1,3 +1,17 @@
+function append<T>(src:T[],data:T[],offset:int,len:int):T[]{
+   if(len>data.length){
+      throw "len>data.length";
+   }
+   var ret=new T[src.length+data.length];
+   var i=0;
+   for(;i<src.length;i++){
+      ret[i]=src[i];
+   }
+   for(;i<src.length+len;i++){
+      ret[i]=data[i-src.length];
+   }
+   return ret;
+};
 var main=()=>{
    for(;;){
       try{
@@ -5,11 +19,21 @@ var main=()=>{
             server.listen(0);
             autounwinding(var client=server.accept()){
                system.console.WriteLine("收到来自"+client.address.toString()+"的连接");
-               var buf = new byte[1024];
-               client.read(buf);
-               client.sendString("HTTP/1.1 200 OK\r\n");
-               client.sendString("Content-Type:text/html; charset=UTF-8\r\n\r\n");
-               client.sendString("hello world");
+               var buf = new byte[10];
+               var rec=new byte[0];
+               for(;;){
+                  var len=client.read(buf);
+                  rec=main.append<byte>(rec,buf,0,len);
+                  if(len<buf.length){
+                     break;
+                  }
+               }
+               system.console.WriteLine("收到报文:\r\n"+new string(rec));
+               var msg="HTTP/1.1 200 OK\r\n";
+               msg=msg+"Content-Type:text/html; charset=UTF-8\r\n\r\n";
+               msg=msg+"hello world";
+               system.console.WriteLine("响应报文:\r\n"+msg);
+               client.sendString(msg);
             }
          }
       }catch(e:string){
