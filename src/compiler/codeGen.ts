@@ -3389,7 +3389,7 @@ function finallyOutput() {
     TypeTableGen();
     fs.writeFileSync(`output/typeTable.bin`, Buffer.from(binTypeTable.toBinary()));
     fs.writeFileSync(`output/typeTable.json`, JSON.stringify(binTypeTable.items, null, 4));
-    fs.writeFileSync(`output/typeTableForDebug.json`, JSON.stringify(typeTable, null, 4));
+    // fs.writeFileSync(`output/typeTableForDebug.json`, JSON.stringify(typeTable, null, 4));//避免出现循环引用
 
     stackFrameTableGen();
     fs.writeFileSync(`output/stackFrameTable.bin`, Buffer.from(binStackFrameTable.toBinary()));

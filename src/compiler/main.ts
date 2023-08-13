@@ -186,7 +186,7 @@ function main(inputFiles: string[]) {
         console.time(`类型推导耗时`);
         semanticCheck();
         console.timeEnd(`类型推导耗时`);
-        fs.writeFileSync(`output/stage-2.json`, JSON.stringify(program, null, 4));
+        // fs.writeFileSync(`output/stage-2.json`, JSON.stringify(program, null, 4));//递归调用可能出现循环引用,就不放出来了
         console.time(`IR生成耗时`);
         codeGen();
         console.timeEnd(`IR生成耗时`);

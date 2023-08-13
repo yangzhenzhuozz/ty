@@ -1,55 +1,9 @@
-/*
-1.多行注释测试
-
-2.模板函数测试
-模板函数在编写的时候只做语法检查，不做语义检查
-只有在模板特化的时候才进行完整的编译动作，如: <T> val; val.add() 在没有特化时拿不到val的类型，无法判断val是否有add成员
-*/
-function append<T>(src:T[],data:T[],offset:int,len:int):T[]{
-   if(len>data.length){
-      throw "len>data.length";
-   }
-   var ret=new T[src.length+data.length];
-   var i=0;
-   for(;i<src.length;i++){
-      ret[i]=src[i];
-   }
-   for(;i<src.length+len;i++){
-      ret[i]=data[i-src.length];
-   }
-   return ret;
-};
-
-//单行注释测试, var main=()=>{}; 等价于 function main(){}
 var main=()=>{
-   //这是一个扩展函数测试，扩展了int.toString
-   //操作符重载测试,重载了string的 operate + 操作符
-   system.console.WriteLine("string of integer value 1 is : " + 1.toString()); //两个string进行 operate + 操作
-   for(;;){
-      try{
-         autounwinding(var server=new system.net.ServerSocket("0.0.0.0",10086s)){
-            server.listen(0);
-            autounwinding(var client=server.accept()){
-               system.console.WriteLine("收到来自"+client.address.toString()+"的连接");
-               var buf = new byte[10];
-               var rec=new byte[0];
-               for(;;){
-                  var len=client.read(buf);
-                  rec=main.append<byte>(rec,buf,0,len);
-                  if(len<buf.length){
-                     break;
-                  }
-               }
-               system.console.WriteLine("收到报文:\r\n"+new string(rec));
-               var msg="HTTP/1.1 200 OK\r\n";
-               msg=msg+"Content-Type:text/html; charset=UTF-8\r\n\r\n";
-               msg=msg+"hello world";
-               system.console.WriteLine("响应报文:\r\n"+msg);
-               client.sendString(msg);
-            }
-         }
-      }catch(e:string){
-         system.console.WriteLine("捕获到异常:"+e);
-      }
-   }
+   system.console.WriteLine(foo(1).toString());
+};
+function foo(v:int){
+  if(v>0)
+    return 0;
+  else
+    return foo(v-1);
 };

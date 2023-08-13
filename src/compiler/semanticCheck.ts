@@ -1354,8 +1354,19 @@ export function registerType(type: TypeUsed): number {
     }
     //这样做只影响typeTable的数据，对原来的program无影响
     if (type.FunctionType != undefined) {
-        type = JSON.parse(JSON.stringify(type));
-        (type as FunctionType).body = undefined;//删除body,避免重复引用
+        type = JSON.parse(JSON.stringify({
+            FunctionType: {
+                namespace: type.FunctionType.namespace,
+                hasFunctionScan: type.FunctionType.hasFunctionScan,
+                isNative: type.FunctionType.isNative,
+                _arguments: type.FunctionType._arguments,
+                //body: type.FunctionType.body,  //不拷贝body,避免循环引用
+                retType: type.FunctionType.retType,
+                capture: type.FunctionType.capture,
+                templates: type.FunctionType.templates,
+                _construct_for_type: type.FunctionType._construct_for_type
+            }
+        }));//避免修改到program中的对象
     }
     return ret;
 }
